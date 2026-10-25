@@ -40,13 +40,18 @@ android {
             applicationIdSuffix ".demo"
             minifyEnabled false
         }
-        // A hosted investor build intentionally has no bundled www assets. It
-        // may only be assembled when ZENDO_NODE_URL names the approved HTTPS
-        // origin, which makes the WebView and /api routes same-origin.
+        // The investor APK packages the complete presentation bundle. A public
+        // HTTPS origin is still required as the canonical origin for its real
+        // same-origin /api authentication and data requests.
         hostedDemo {
             initWith release
             applicationIdSuffix ".investor"
             matchingFallbacks = ["release"]
+            // The distributable investor demo must be installable even when a
+            // production Play signing key is intentionally unavailable. This
+            // uses the standard Android debug certificate only for this demo
+            // variant; the release/play variant remains separately signed.
+            signingConfig signingConfigs.debug
             minifyEnabled false
         }
         release {
@@ -69,6 +74,14 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
+    // Reuse the validated static frontend bundle for the investor APK. The
+    // hostedDemo variant must never degrade into a remote-website wrapper.
+    sourceSets {
+        hostedDemo {
+            assets.srcDirs += ["src/demo/assets"]
+        }
+    }
 }
 
 tasks.register("validateDemoAssets", Exec) {
@@ -88,5 +101,6 @@ tasks.configureEach {
     }
     if (name == "preHostedDemoBuild") {
         dependsOn tasks.named("validateHostedOrigin")
+        dependsOn tasks.named("validateDemoAssets")
     }
 }

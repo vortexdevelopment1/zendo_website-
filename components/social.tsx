@@ -47,7 +47,7 @@ export function ProfileBody({ initial, signedIn, self }: { initial: ProfileView;
             <p className="zendo-mt-2 zendo-break-all zendo-font-mono zendo-text-xs zendo-text-muted">{data.person.address}</p>
           </div>
           {self ? (
-            <Button size="sm" variant="outline" asChild><Link href="/app/social">Open social</Link></Button>
+            <Button size="sm" variant="outline" asChild><Link href={typeof document !== "undefined" && document.documentElement.dataset.zendoApp === "android" ? "/mobile/social" : "/app/social"}>Open social</Link></Button>
           ) : signedIn ? (
             <Button size="sm" disabled={busy} onClick={toggleFollow}>{data.youFollow ? "Unfollow" : "Follow"}</Button>
           ) : (

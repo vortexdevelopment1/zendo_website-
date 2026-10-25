@@ -7,6 +7,8 @@ import android.util.Log;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,6 +30,8 @@ import android.widget.FrameLayout;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.util.Collections;
 import java.util.Locale;
 
 public class MainActivity extends Activity {
@@ -46,8 +50,22 @@ public class MainActivity extends Activity {
     private EditText urlField;
     private boolean bundled;
     private boolean hosted;
+    private boolean bundledAtHostedOrigin;
     private String hostedOrigin = "";
     private boolean webInitializationScheduled;
+    private final Handler cookieHandler = new Handler(Looper.getMainLooper());
+    private final Runnable cookieFlush = new Runnable() {
+        @Override
+        public void run() {
+            if (web != null) {
+                // Authentication happens through in-page API requests. Persist
+                // any newly issued first-party HTTP-only cookie even if Android
+                // later force-stops this process without lifecycle callbacks.
+                CookieManager.getInstance().flush();
+                cookieHandler.postDelayed(this, 2000);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +74,11 @@ public class MainActivity extends Activity {
 
         bundled = countBundledAssets() > 0;
         hostedOrigin = normalize(getString(R.string.default_url));
-        hosted = !bundled && !hostedOrigin.isEmpty();
+        hosted = !hostedOrigin.isEmpty();
+        // A hosted investor build presents local, packaged HTML/CSS/JS at the
+        // approved public origin. This keeps first-party HTTP-only auth cookies
+        // and relative /api calls same-origin without loading remote UI files.
+        bundledAtHostedOrigin = bundled && hosted;
 
         LinearLayout bar = findViewById(R.id.bar);
         urlField = findViewById(R.id.url);
@@ -103,6 +125,7 @@ public class MainActivity extends Activity {
         // Make first-party cookie acceptance and persistence explicit for the
         // standalone WebView process; no third-party cookies are enabled.
         CookieManager.getInstance().setAcceptCookie(true);
+        cookieHandler.postDelayed(cookieFlush, 2000);
         container.addView(web, new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 
@@ -130,10 +153,13 @@ public class MainActivity extends Activity {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 Uri uri = request.getUrl();
-                if (uri != null && BUNDLED_HOST.equalsIgnoreCase(uri.getHost())) {
+                if (shouldServeBundledAsset(uri)) {
                     WebResourceResponse response = bundledAsset(uri);
-                    if (response == null) Log.w(TAG, "Missing bundled asset " + uri);
-                    return response;
+                    if (response != null) return response;
+                    Log.e(TAG, "Missing required bundled asset " + uri);
+                    // Do not silently fall back to a remote website file. APIs
+                    // are explicitly excluded in shouldServeBundledAsset.
+                    return missingBundledAsset();
                 }
                 return null;
             }
@@ -162,6 +188,13 @@ public class MainActivity extends Activity {
             }
         });
         web.setDownloadListener((url, userAgent, contentDisposition, mimeType, contentLength) -> save(url, userAgent, contentDisposition, mimeType));
+
+        if (bundledAtHostedOrigin) {
+            String start = androidModeUrl(hostedOrigin + "/mobile");
+            Log.i(TAG, "Loading bundled frontend at approved API origin " + start);
+            web.loadUrl(start);
+            return;
+        }
 
         if (bundled) {
             Log.i(TAG, "Loading bundled entry " + BUNDLED_URL);
@@ -250,6 +283,33 @@ public class MainActivity extends Activity {
         } catch (IOException error) {
             return null;
         }
+    }
+
+    private WebResourceResponse missingBundledAsset() {
+        return new WebResourceResponse(
+                "text/plain",
+                "UTF-8",
+                404,
+                "Not Found",
+                Collections.emptyMap(),
+                new ByteArrayInputStream("Bundled asset not found".getBytes())
+        );
+    }
+
+    private boolean shouldServeBundledAsset(Uri uri) {
+        if (!bundled || uri == null || !isHttps(uri)) {
+            return false;
+        }
+        if (BUNDLED_HOST.equalsIgnoreCase(uri.getHost())) {
+            return true;
+        }
+        // The only network traffic intentionally excluded from interception is
+        // first-party backend/API traffic. All frontend routes and static files
+        // at the configured hosted origin must be served from this APK.
+        return bundledAtHostedOrigin
+                && isHostedOrigin(uri)
+                && !"/api".equals(uri.getPath())
+                && !uri.getPath().startsWith("/api/");
     }
 
     private boolean hasExtension(String path) {
@@ -366,7 +426,12 @@ public class MainActivity extends Activity {
 
     private boolean isAllowedNavigation(Uri uri) {
         if (!isHttps(uri)) return false;
+        if (BUNDLED_HOST.equalsIgnoreCase(uri.getHost())) return bundled;
         if (!hosted) return true;
+        return isHostedOrigin(uri);
+    }
+
+    private boolean isHostedOrigin(Uri uri) {
         Uri expected = Uri.parse(hostedOrigin);
         return expected.getHost() != null
                 && expected.getHost().equalsIgnoreCase(uri.getHost())
@@ -381,6 +446,13 @@ public class MainActivity extends Activity {
     protected void onPause() {
         CookieManager.getInstance().flush();
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        cookieHandler.removeCallbacks(cookieFlush);
+        CookieManager.getInstance().flush();
+        super.onDestroy();
     }
 
     @Override

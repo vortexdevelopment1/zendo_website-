@@ -26,6 +26,36 @@ const NAV = [
   { href: "/app/settings", label: "Settings", icon: Settings },
 ];
 
+const ANDROID_LOCAL_APP_ROUTES: Record<string, string> = {
+  "/": "/mobile",
+  "/app": "/mobile/wallet",
+  "/app/send": "/mobile/send",
+  "/app/bridge": "/mobile/bridge",
+  "/app/stake": "/mobile/stake",
+  "/app/social": "/mobile/social",
+  "/app/support": "/mobile/support",
+  "/app/settings": "/mobile/profile",
+};
+
+const FIXED_SUPPLY_PROPOSAL = {
+  title: "Confirm ZendoCoin fixed supply at 1,000,000,000",
+  body: "ZendoCoin total supply is fixed at 1,000,000,000 ZCoin. Staking rewards are paid from the existing fixed supply. No additional ZCoin is minted.",
+};
+
+// The supply row is a bundled demo fixture. Normalize an older hosted fixture
+// at the presentation boundary so a stale API snapshot cannot imply inflation.
+// This deliberately does not write to governance or ledger storage.
+function presentInvestorProposals(rows: ProposalRow[]) {
+  return rows.map((proposal) => proposal.id === "prop_supply" ? { ...proposal, ...FIXED_SUPPLY_PROPOSAL } : proposal);
+}
+
+function appRoute(href: string) {
+  if (typeof document !== "undefined" && document.documentElement.dataset.zendoApp === "android") {
+    return ANDROID_LOCAL_APP_ROUTES[href] || href;
+  }
+  return href;
+}
+
 export function AppFrame({ user, children }: { user: PublicUser; children: React.ReactNode }) {
   const pathname = usePathname();
   const [notices, setNotices] = useState<NoticeRow[]>([]);
@@ -51,9 +81,10 @@ export function AppFrame({ user, children }: { user: PublicUser; children: React
         <nav className="zendo-app-nav zendo-mt-5 zendo-grid zendo-gap-1">
           {links.map((link) => {
             const Icon = link.icon;
-            const active = pathname === link.href;
+            const href = appRoute(link.href);
+            const active = pathname === href;
             return (
-              <Link key={link.href} href={link.href} className={cn("zendo-app-nav-link zendo-flex zendo-items-center zendo-gap-2 zendo-rounded-xl zendo-px-3 zendo-py-2 zendo-text-sm", active ? "zendo-bg-lime zendo-text-ink" : "zendo-text-muted hover:zendo-bg-white/5 hover:zendo-text-cream")}>
+              <Link key={link.href} href={href} className={cn("zendo-app-nav-link zendo-flex zendo-items-center zendo-gap-2 zendo-rounded-xl zendo-px-3 zendo-py-2 zendo-text-sm", active ? "zendo-bg-lime zendo-text-ink" : "zendo-text-muted hover:zendo-bg-white/5 hover:zendo-text-cream")}>
                 <Icon className="zendo-app-nav-icon zendo-h-4 zendo-w-4" />
                 {link.label}
               </Link>
@@ -93,9 +124,10 @@ export function AppFrame({ user, children }: { user: PublicUser; children: React
       <nav className="zendo-safe-bottom zendo-fixed zendo-inset-x-0 zendo-bottom-0 zendo-z-30 zendo-flex zendo-gap-1 zendo-overflow-x-auto zendo-border-t zendo-border-line zendo-bg-ink/95 zendo-md:zendo-hidden">
         {links.map((link) => {
           const Icon = link.icon;
-          const active = pathname === link.href;
+          const href = appRoute(link.href);
+          const active = pathname === href;
           return (
-            <Link key={link.href} href={link.href} className={cn("zendo-grid zendo-min-w-16 zendo-shrink-0 zendo-justify-items-center zendo-gap-1 zendo-px-3 zendo-py-2 zendo-text-[11px]", active ? "zendo-text-lime" : "zendo-text-muted")}>
+            <Link key={link.href} href={href} className={cn("zendo-grid zendo-min-w-16 zendo-shrink-0 zendo-justify-items-center zendo-gap-1 zendo-px-3 zendo-py-2 zendo-text-[11px]", active ? "zendo-text-lime" : "zendo-text-muted")}>
               <Icon className="zendo-h-4 zendo-w-4" />
               {link.label}
             </Link>
@@ -123,12 +155,12 @@ export function WalletHome() {
         <p className="num zendo-wallet-balance zendo-mt-1 zendo-font-display zendo-text-4xl zendo-font-bold">{data.zcoin}</p>
         <p className="zendo-mt-2 zendo-text-sm zendo-text-muted">Pending stake rewards {data.pendingRewards} Z</p>
         <div className="zendo-wallet-actions zendo-mt-5 zendo-flex zendo-flex-wrap zendo-gap-2">
-          <Button className="zendo-wallet-action-primary" onClick={() => router.push("/app/send")}>Send</Button>
+          <Button className="zendo-wallet-action-primary" onClick={() => router.push(appRoute("/app/send"))}>Send</Button>
           <Button variant="outline" onClick={() => document.getElementById("receive")?.scrollIntoView({ behavior: "smooth" })}>Receive</Button>
-          <Button variant="outline" onClick={() => router.push("/app/bridge")}>Bridge</Button>
+          <Button variant="outline" onClick={() => router.push(appRoute("/app/bridge"))}>Bridge</Button>
           <div className="zendo-wallet-action-utilities zendo-flex zendo-flex-wrap zendo-gap-1">
-            <Button variant="ghost" onClick={() => router.push("/app/stake")}>Stake</Button>
-            <Button variant="ghost" onClick={() => router.push("/app/stake#claim")}>Claim Rewards</Button>
+            <Button variant="ghost" onClick={() => router.push(appRoute("/app/stake"))}>Stake</Button>
+            <Button variant="ghost" onClick={() => router.push(appRoute("/app/stake") + "#claim")}>Claim Rewards</Button>
             <Button variant="ghost" onClick={() => router.push("/governance")}>Governance</Button>
           </div>
         </div>
@@ -253,6 +285,14 @@ export function BridgeDesk() {
 
   if (error) return <p className="zendo-text-coral">{error}</p>;
   if (!data) return <LoadingPanel label="Loading the bridge" />;
+  if (!data.configured) {
+    return (
+      <Panel className="zendo-grid zendo-gap-3">
+        <h2 className="zendo-font-semibold">Bridge unavailable in this demo</h2>
+        <p className="zendo-text-sm zendo-leading-6 zendo-text-muted">Live bridge operations require production bridge infrastructure. Deposits and withdrawals are disabled in this investor demo; your wallet balance is unchanged.</p>
+      </Panel>
+    );
+  }
 
   return (
     <div className="zendo-grid zendo-gap-4">
@@ -260,22 +300,20 @@ export function BridgeDesk() {
         <p className="zendo-text-sm zendo-text-muted">Vault available for deposits</p>
         <p className="num zendo-text-2xl zendo-font-semibold">{data.vaultZ} Z</p>
         <p className="zendo-mt-2 zendo-break-all zendo-font-mono zendo-text-xs zendo-text-muted">{data.vault}</p>
-        <p className="zendo-mt-3 zendo-text-sm zendo-text-muted">
-          {data.configured ? `Signer ${data.signer} · Polygon chain ${data.chainId} · contract ${data.polygonBridge}` : "This node has no bridge signer yet. A withdrawal will not lock coins until ZENDO_POLYGON_BRIDGE and ZENDO_BRIDGE_PRIVATE_KEY are set."}
-        </p>
+        <p className="zendo-mt-3 zendo-text-sm zendo-text-muted">Polygon bridge service is available on chain {data.chainId}.</p>
       </Panel>
       <form className="zendo-grid zendo-max-w-xl zendo-gap-4" onSubmit={(event) => { event.preventDefault(); void run({ action: "withdraw", recipient: withdraw.recipient, amount: withdraw.amount }); }}>
         <Field label="Polygon recipient" hint="The 0x address that will call release() or receive the ERC-20.">
-          <Input value={withdraw.recipient} onChange={(event) => { const recipient = event.target.value.trim(); setWithdraw((current) => ({ ...current, recipient })); }} required />
+          <Input value={withdraw.recipient} onChange={(event) => { const recipient = event.target.value.trim(); setWithdraw((current) => ({ ...current, recipient })); }} required disabled={!data.configured} />
         </Field>
         <Field label="Amount" hint={`Locks this many Z. Network fee is ${data.fee} Z on top. There is no refund after the voucher is signed.`}>
-          <Input inputMode="decimal" value={withdraw.amount} onChange={(event) => { const amount = event.target.value; setWithdraw((current) => ({ ...current, amount })); }} required />
+          <Input inputMode="decimal" value={withdraw.amount} onChange={(event) => { const amount = event.target.value; setWithdraw((current) => ({ ...current, amount })); }} required disabled={!data.configured} />
         </Field>
         <Button type="submit" disabled={busy}>{busy ? "Signing…" : "Withdraw to Polygon"}</Button>
       </form>
       <form className="zendo-grid zendo-max-w-xl zendo-gap-4" onSubmit={(event) => { event.preventDefault(); void run({ action: "deposit", txHash }); }}>
         <Field label="Polygon lock transaction" hint="The hash of lock(). This node reads the log. It does not accept an amount from the browser.">
-          <Input value={txHash} onChange={(event) => setTxHash(event.target.value.trim())} required />
+          <Input value={txHash} onChange={(event) => setTxHash(event.target.value.trim())} required disabled={!data.configured} />
         </Field>
         <Button type="submit" variant="outline" disabled={busy}>Deposit into Zendo</Button>
       </form>
@@ -456,7 +494,7 @@ function writePref(name: PrefName, value: string) {
   emitPrefs();
 }
 
-export function SettingsForm({ user }: { user: PublicUser }) {
+export function SettingsForm({ user, mobile = false }: { user: PublicUser; mobile?: boolean }) {
   const router = useRouter();
   const [password, setPassword] = useState({ current: "", next: "" });
   const [pin, setPin] = useState({ current: "", next: "" });
@@ -475,6 +513,116 @@ export function SettingsForm({ user }: { user: PublicUser }) {
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not prepare the download.");
     }
+  }
+  if (mobile) {
+    const shortAddress = user.address.length > 15 ? `${user.address.slice(0, 7)}…${user.address.slice(-5)}` : user.address;
+    const inviteLink = `${typeof window !== "undefined" ? window.location.origin : ""}/signup?ref=${user.referralCode}`;
+    return (
+      <div className="zendo-mobile-profile">
+        <header className="zendo-mobile-profile-heading">
+          <p className="zendo-mobile-eyebrow">PROFILE</p>
+          <h1>Wallet &amp; preferences</h1>
+        </header>
+        <Panel className="zendo-mobile-profile-card zendo-mobile-identity-card">
+          <div className="zendo-mobile-identity-row">
+            <div className="zendo-min-w-0">
+              <p className="zendo-text-sm zendo-text-muted">Wallet Address</p>
+              <p className="zendo-mobile-address" title={user.address}>{shortAddress}</p>
+            </div>
+            <CopyButton value={user.address} label="Copy Address" />
+          </div>
+          <div className="zendo-mobile-profile-divider" />
+          <div className="zendo-mobile-identity-row">
+            <div>
+              <p className="zendo-text-sm zendo-text-muted">Referral</p>
+              <p className="zendo-mobile-referral">{user.referralCode}</p>
+            </div>
+            <CopyButton value={inviteLink} label="Copy Invite Link" />
+          </div>
+        </Panel>
+        <Panel className="zendo-mobile-profile-card zendo-grid zendo-gap-4">
+          <div>
+            <h2 className="zendo-font-semibold">Appearance</h2>
+            <p className="zendo-mt-1 zendo-text-sm zendo-text-muted">Customize how Zendo looks on this device.</p>
+          </div>
+          <div className="zendo-mobile-preference">
+            <span>Theme</span>
+            <div className="zendo-mobile-segment" role="group" aria-label="Color theme">
+              {(["dark", "light"] as const).map((value) => <Button key={value} type="button" size="sm" variant={theme === value ? "primary" : "outline"} onClick={() => writePref("theme", value)}>{value === "dark" ? "Dark" : "Light"}</Button>)}
+            </div>
+          </div>
+          <div className="zendo-mobile-preference">
+            <span>Text size</span>
+            <div className="zendo-mobile-segment zendo-mobile-segment-three" role="group" aria-label="Text size">
+              {([["100", "Standard"], ["112", "Large"], ["125", "Larger"]] as const).map(([value, label]) => <Button key={value} type="button" size="sm" variant={font === value ? "primary" : "outline"} onClick={() => writePref("font", value)}>{label}</Button>)}
+            </div>
+          </div>
+          <div className="zendo-mobile-preference">
+            <span>Contrast</span>
+            <div className="zendo-mobile-segment" role="group" aria-label="Contrast">
+              {(["standard", "high"] as const).map((value) => <Button key={value} type="button" size="sm" variant={contrast === value ? "primary" : "outline"} onClick={() => writePref("contrast", value)}>{value === "standard" ? "Standard" : "High"}</Button>)}
+            </div>
+          </div>
+        </Panel>
+        <Panel className="zendo-mobile-profile-card zendo-grid zendo-gap-3">
+          <div>
+            <h2 className="zendo-font-semibold">Data &amp; History</h2>
+            <p className="zendo-mt-1 zendo-text-sm zendo-text-muted">Export your wallet activity and records.</p>
+          </div>
+          <p className="zendo-text-sm zendo-text-muted">Transactions, staking, governance and launchpad activity for this wallet.</p>
+          <div className="zendo-mobile-history-actions">
+            <Button type="button" size="sm" onClick={() => downloadHistory("json")}>Download My History</Button>
+            <Button type="button" size="sm" variant="outline" onClick={() => downloadHistory("csv")}>Download CSV</Button>
+          </div>
+        </Panel>
+        <section className="zendo-mobile-security">
+          <p className="zendo-mobile-section-label">Security</p>
+          <form className="zendo-grid zendo-gap-3" onSubmit={async (event) => {
+            event.preventDefault();
+            try {
+              await api("/api/auth/password", { method: "POST", body: JSON.stringify(password) });
+              toast.success("Password updated");
+              setPassword({ current: "", next: "" });
+            } catch (err) {
+              toast.error(err instanceof Error ? err.message : "Could not change password.");
+            }
+          }}>
+            <Panel className="zendo-mobile-profile-card zendo-grid zendo-gap-3">
+              <h2 className="zendo-font-semibold">Change password</h2>
+              <Input type="password" placeholder="Current password" value={password.current} onChange={(event) => { const current = event.target.value; setPassword((prev) => ({ ...prev, current })); }} />
+              <Input type="password" placeholder="New password" value={password.next} onChange={(event) => { const next = event.target.value; setPassword((prev) => ({ ...prev, next })); }} />
+              <Button type="submit" size="sm" className="zendo-justify-self-start">Update password</Button>
+            </Panel>
+          </form>
+          <form className="zendo-grid zendo-gap-3" onSubmit={async (event) => {
+            event.preventDefault();
+            try {
+              await api("/api/auth/pin-change", { method: "POST", body: JSON.stringify(pin) });
+              toast.success("PIN updated");
+              setPin({ current: "", next: "" });
+            } catch (err) {
+              toast.error(err instanceof Error ? err.message : "Could not change PIN.");
+            }
+          }}>
+            <Panel className="zendo-mobile-profile-card zendo-grid zendo-gap-3">
+              <h2 className="zendo-font-semibold">Change PIN</h2>
+              <Input inputMode="numeric" maxLength={4} placeholder="Current PIN" value={pin.current} onChange={(event) => { const current = event.target.value; setPin((prev) => ({ ...prev, current })); }} />
+              <Input inputMode="numeric" maxLength={4} placeholder="New PIN" value={pin.next} onChange={(event) => { const next = event.target.value; setPin((prev) => ({ ...prev, next })); }} />
+              <Button type="submit" size="sm" variant="outline" className="zendo-justify-self-start">Update PIN</Button>
+            </Panel>
+          </form>
+          <Panel className="zendo-mobile-profile-card zendo-grid zendo-gap-2">
+            <h2 className="zendo-font-semibold">Session</h2>
+            <p className="zendo-text-sm zendo-text-muted">Sign out clears the session cookie on this node.</p>
+            <Button variant="outline" className="zendo-justify-self-start" onClick={async () => {
+              await api("/api/auth/signout", { method: "POST" });
+              router.push(appRoute("/"));
+              router.refresh();
+            }}>Sign out</Button>
+          </Panel>
+        </section>
+      </div>
+    );
   }
   return (
     <div className="zendo-grid zendo-max-w-xl zendo-gap-4">
@@ -552,7 +700,7 @@ export function SettingsForm({ user }: { user: PublicUser }) {
         <p className="zendo-text-sm zendo-text-muted">Sign out clears the session cookie on this node.</p>
         <Button variant="outline" className="zendo-justify-self-start" onClick={async () => {
           await api("/api/auth/signout", { method: "POST" });
-          router.push("/");
+          router.push(appRoute("/"));
           router.refresh();
         }}>Sign out</Button>
       </Panel>
@@ -573,7 +721,7 @@ export function GovernDesk({ focusId }: { focusId?: string }) {
       api<{ user: PublicUser | null }>("/api/auth/me"),
     ])
       .then(([list, me]) => {
-        setRows(list);
+        setRows(presentInvestorProposals(list));
         setUser(me.user);
       })
       .catch((err) => setError(err instanceof Error ? err.message : "Could not load proposals."));
@@ -590,7 +738,7 @@ export function GovernDesk({ focusId }: { focusId?: string }) {
           event.preventDefault();
           try {
             const next = await api<ProposalRow[]>("/api/governance", { method: "POST", body: JSON.stringify(draft) });
-            setRows(next);
+            setRows(presentInvestorProposals(next));
             setDraft({ title: "", body: "", key: "trade_bps", value: "" });
             toast.success("Proposal recorded");
             if (next[0]) router.push(`/governance/${next[0].id}`);
@@ -655,7 +803,7 @@ export function GovernDesk({ focusId }: { focusId?: string }) {
                 <Button key={choice} size="sm" variant={proposal.yourVote === choice ? "primary" : "outline"} className={tone} onClick={async () => {
                   try {
                     const next = await api<ProposalRow[]>(`/api/governance/${proposal.id}`, { method: "POST", body: JSON.stringify({ choice }) });
-                    setRows(next);
+                    setRows(presentInvestorProposals(next));
                     toast.success("Vote recorded");
                   } catch (err) {
                     toast.error(err instanceof Error ? err.message : "Vote failed.");

@@ -651,6 +651,9 @@ html[data-zendo-app="android"] body {
 }
 
 html[data-zendo-app="android"] .zendo-site-footer { display: none; }
+html[data-zendo-app="android"] .zendo-app-frame > nav { display: none; }
+html[data-zendo-app="android"] .zendo-app-content { padding-bottom: 6.5rem; }
+.zendo-mobile-home{min-height:100%;padding:calc(.9rem + env(safe-area-inset-top)) 1rem 6.5rem;background:radial-gradient(500px 260px at 100% 0,rgba(200,255,0,.12),transparent),#0a0a0a}.zendo-mobile-home h1{margin:.25rem 0;font-size:2rem;font-weight:800}.zendo-mobile-app-header{display:flex;align-items:center;justify-content:space-between;margin:0 0 2rem;padding-bottom:.85rem;border-bottom:1px solid #22291f}.zendo-mobile-wordmark{color:#c8ff00;font-size:1.35rem;font-weight:900;letter-spacing:.06em}.zendo-mobile-header-link{padding:.45rem .7rem;border:1px solid #31382a;border-radius:999px;color:#dfe5d2;font-size:.8rem}.zendo-mobile-eyebrow{color:#c8ff00;font-size:.72rem;font-weight:800;letter-spacing:.15em}.zendo-mobile-copy{color:#b9c0ae;line-height:1.6}.zendo-mobile-actions{display:flex;gap:.75rem;margin:2rem 0}.zendo-mobile-top{display:flex;align-items:center;justify-content:space-between}.zendo-mobile-top>a{padding:.7rem;border:1px solid #31382a;border-radius:999px}.zendo-mobile-balance{margin:1.5rem 0;padding:1.25rem;background:linear-gradient(135deg,#1b2112,#11130e)}.zendo-mobile-balance p,.zendo-mobile-balance span,.zendo-mobile-card span{display:block;color:#b9c0ae;font-size:.85rem}.zendo-mobile-balance strong{display:block;margin:.4rem 0;font-size:1.8rem}.zendo-mobile-balance>div{display:flex;gap:.6rem;margin-top:1rem}.zendo-mobile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.zendo-mobile-card{display:grid;gap:.45rem;min-height:8.5rem;padding:1rem;border:1px solid #31382a;border-radius:1rem;background:#11130e}.zendo-mobile-card svg{color:#c8ff00}.zendo-mobile-section-title{display:flex;align-items:center;justify-content:space-between;margin:1.8rem 0 .75rem}.zendo-mobile-section-title h2{font-size:1.15rem;font-weight:700}.zendo-mobile-section-title a{color:#c8ff00;font-size:.85rem}
 
 /* The native shell already supplies the single app-level ZENDO wordmark. */
 html[data-zendo-app="android"] .zendo-home-hero-logo { display: none; }
@@ -659,6 +662,19 @@ html[data-zendo-app="android"] .zendo-site-header > div {
   height: calc(3.8rem + env(safe-area-inset-top));
   padding-top: env(safe-area-inset-top);
 }
+
+/* One app-level header is shared by Home, Wallet, Explore, and Profile.
+   The route-local headers remain for the public web documents only. */
+html[data-zendo-app="android"] .zendo-mobile-app-header { display: none; }
+html[data-zendo-app="android"] .zendo-mobile-home { padding: 1rem 1rem 6.5rem; }
+html[data-zendo-app="android"] .zendo-mobile-home h1 { margin: .2rem 0; }
+html[data-zendo-app="android"] .zendo-mobile-copy { line-height: 1.55; }
+html[data-zendo-app="android"] .zendo-mobile-actions { margin: 1.5rem 0; }
+html[data-zendo-app="android"] .zendo-mobile-balance { margin: 1.2rem 0; padding: 1.1rem; }
+html[data-zendo-app="android"] .zendo-mobile-section-title { margin: 1.5rem 0 .75rem; }
+html[data-zendo-app="android"] .zendo-app-content { position: relative; padding-top: .9rem; }
+html[data-zendo-app="android"] .zendo-app-toolbar { position: absolute; z-index: 45; top: -3.35rem; right: 3.75rem; margin: 0; }
+html[data-zendo-app="android"] .zendo-app-toolbar button { min-width: 2.5rem; min-height: 2.5rem; display: grid; place-items: center; }
 
 html[data-zendo-app="android"] .zendo-site-header .zendo-md\:zendo-flex { display: none; }
 
@@ -705,6 +721,46 @@ html[data-zendo-app="android"] .zendo-mobile-app-nav svg { width: 1.2rem; height
 html[data-zendo-app="android"] .zendo-mobile-app-nav a.is-active { background: #1b2016; color: #c8ff00; }
 /* The native shell supplies the sole wordmark across both guest and auth views. */
 html[data-zendo-app="android"] .zendo-auth-card-logo { display: none; }
+
+/* Android Profile only: compact wallet identity and preference hierarchy. */
+.zendo-mobile-profile { display: grid; gap: .8rem; max-width: 34rem; margin-inline: auto; }
+.zendo-mobile-profile-heading { padding: .1rem .1rem .2rem; }
+.zendo-mobile-profile-heading h1 { margin: .2rem 0 0; font-size: clamp(1.55rem, 7vw, 2rem); font-weight: 800; letter-spacing: -.04em; }
+.zendo-mobile-profile-card { border-color: color-mix(in srgb, #31382a 86%, #c8ff00 14%); padding: .9rem 1rem; border-radius: 1rem; background: linear-gradient(145deg, rgba(255,255,255,.022), rgba(200,255,0,.035)); box-shadow: 0 12px 26px rgba(0,0,0,.13); }
+.zendo-mobile-identity-card { display: grid; gap: .9rem; }
+.zendo-mobile-identity-row { display: flex; align-items: center; justify-content: space-between; gap: .8rem; min-width: 0; }
+.zendo-mobile-address { margin-top: .18rem; overflow: hidden; color: #f3f5ee; font-family: var(--font-mono, ui-monospace, monospace); font-size: 1.02rem; font-weight: 700; letter-spacing: .015em; text-overflow: ellipsis; white-space: nowrap; }
+.zendo-mobile-referral { margin-top: .15rem; color: #c8ff00; font-family: var(--font-mono, ui-monospace, monospace); font-size: 1.05rem; font-weight: 800; letter-spacing: .08em; }
+.zendo-mobile-identity-card .zendo-inline-flex { flex: 0 0 auto; min-height: 2.4rem; padding-inline: .7rem; font-size: .75rem; }
+.zendo-mobile-profile-divider { height: 1px; background: color-mix(in srgb, #31382a 84%, transparent); }
+.zendo-mobile-profile-card.zendo-gap-4 { gap: .72rem; }
+.zendo-mobile-preference { display: grid; gap: .3rem; }
+.zendo-mobile-preference > span { color: #dfe5d2; font-size: .84rem; font-weight: 650; line-height: 1.2; }
+.zendo-mobile-segment { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .3rem; padding: .22rem; border: 1px solid #31382a; border-radius: .78rem; background: rgba(0,0,0,.24); }
+.zendo-mobile-segment-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.zendo-mobile-segment .zendo-inline-flex { min-height: 2.25rem; justify-content: center; padding-inline: .35rem; border-color: transparent; font-size: .75rem; }
+.zendo-mobile-segment .zendo-bg-lime { box-shadow: 0 0 0 1px rgba(200,255,0,.18); }
+.zendo-mobile-history-actions { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: .55rem; }
+.zendo-mobile-history-actions .zendo-inline-flex { min-height: 2.55rem; justify-content: center; padding-inline: .6rem; font-size: .78rem; }
+.zendo-mobile-security { display: grid; gap: .7rem; }
+.zendo-mobile-section-label { margin: .2rem .15rem 0; color: #aeb69f; font-size: .7rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+@media (max-width: 359px) { .zendo-mobile-identity-row { align-items: flex-start; flex-direction: column; } .zendo-mobile-identity-card .zendo-inline-flex { width: 100%; justify-content: center; } }
+
+.zendo-mobile-explore-groups { display: grid; gap: 1.2rem; margin-top: 1.35rem; }
+.zendo-mobile-explore-group { display: grid; gap: .55rem; }
+.zendo-mobile-explore-group h2 { margin: 0 .1rem; color: #aeb69f; font-size: .7rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+.zendo-mobile-explore .zendo-mobile-card { min-height: 7.7rem; }
+
+/* The APK opens documents in their own readable route instead of squeezing a
+   browser PDF preview into the mobile shell. Desktop/public pages keep the
+   existing inline preview. */
+.zendo-paper-mobile-card { display: none; }
+html[data-zendo-app="android"] .zendo-paper-preview { display: none; }
+html[data-zendo-app="android"] .zendo-paper-mobile-card { display: grid; gap: .9rem; margin-top: .9rem; }
+html[data-zendo-app="android"] .zendo-paper-mobile-card p { color: #b9c0ae; font-size: .9rem; line-height: 1.55; }
+html[data-zendo-app="android"] .zendo-paper-mobile-card > div { display: flex; flex-wrap: wrap; gap: .65rem; }
+html[data-zendo-app="android"] .zendo-paper-mobile-card a { display: inline-flex; align-items: center; min-height: 2.7rem; padding: 0 .95rem; border: 1px solid #c8ff00; border-radius: .8rem; color: #0a0a0a; background: #c8ff00; font-size: .88rem; font-weight: 700; text-decoration: none; }
+html[data-zendo-app="android"] .zendo-paper-mobile-card a + a { border-color: #31382a; color: #dfe5d2; background: transparent; }
 
 @media (max-width: 430px) {
   html[data-zendo-app="android"] #content > * { min-width: 0; }

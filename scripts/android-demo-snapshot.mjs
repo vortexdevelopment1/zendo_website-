@@ -18,6 +18,8 @@ const SEEDS = [
   "/whitepaper", "/zcoin",
   "/app", "/app/admin", "/app/bridge", "/app/send", "/app/settings", "/app/social",
   "/app/stake", "/app/support",
+  "/mobile", "/mobile/explore", "/mobile/wallet", "/mobile/profile", "/mobile/send",
+  "/mobile/bridge", "/mobile/stake", "/mobile/social", "/mobile/support",
 ];
 
 const SKIP = [/^\/api\//, /^\/_next\/data\//, /^\/zendo-history\//, /\.zip$/i, /\.apk$/i, /^\/watch$/];

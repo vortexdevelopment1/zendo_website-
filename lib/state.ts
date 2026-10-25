@@ -610,7 +610,7 @@ export function createEmptyState(now = Date.now()): State {
     {
       id: "prop_supply",
       title: "Anchor ZendoCoin base supply at 1,000,000,000",
-      body: "Record the published base supply. Staking emissions are the only inflation on top of that anchor.",
+      body: "Record the fixed ZendoCoin supply of 1,000,000,000 ZCoin. Staking rewards are paid from the existing supply; no additional ZCoin is minted.",
       author: SYSTEM.studio,
       authorName: "Launchpad studio",
       createdAt: now - 10 * day,

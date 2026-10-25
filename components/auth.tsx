@@ -11,6 +11,25 @@ import { generateClientPhrase, identityFromPhrase, signProof, toHex, type Browse
 import { Button, Field, Input, Panel } from "./ui";
 import { CopyButton, Logo } from "./chrome";
 
+/**
+ * Android packages documents as local snapshots.  Never send an authenticated
+ * Android user to a server-protected /app snapshot: it was generated without
+ * that user's cookie and can therefore contain a guest redirect.  The mobile
+ * shells below read the real first-party HTTPS session through /api/auth/me.
+ */
+function androidAuthenticatedDestination(next: string) {
+  const local: Record<string, string> = {
+    "/app": "/mobile/wallet",
+    "/app/send": "/mobile/send",
+    "/app/bridge": "/mobile/bridge",
+    "/app/stake": "/mobile/stake",
+    "/app/social": "/mobile/social",
+    "/app/support": "/mobile/support",
+    "/app/settings": "/mobile/profile",
+  };
+  return local[next] || next;
+}
+
 function AuthCard({ title, body, children, compactBranding = false }: { title: string; body: string; children: React.ReactNode; compactBranding?: boolean }) {
   return (
     <div className={`zendo-auth-card zendo-bg-dark zendo-mx-auto zendo-grid zendo-w-full zendo-max-w-lg zendo-gap-6 zendo-px-4 zendo-py-12${compactBranding ? " zendo-auth-card-compact-branding" : ""}`}>
@@ -145,8 +164,15 @@ export function SignUpForm() {
     setError(null);
     try {
       await api("/api/auth/set-pin", { method: "POST", body: JSON.stringify({ pendingId, pin }) });
-      router.push("/app");
-      router.refresh();
+      if (document.documentElement.dataset.zendoApp === "android") {
+        // The standalone APK serves static local documents. Its authenticated
+        // shell must read the just-created HTTPS session rather than reuse an
+        // unauthenticated server snapshot of /app.
+        window.location.assign("/mobile/wallet?zendo_app=android");
+      } else {
+        router.push("/app");
+        router.refresh();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save the PIN.");
       setBusy(false);
@@ -253,7 +279,7 @@ export function SignInForm() {
   const router = useRouter();
   const params = useSearchParams();
   const next = useMemo(() => safeNext(params.get("next")), [params]);
-  const destination = next === "/app/settings" ? "Profile" : next === "/app" ? "Wallet" : null;
+  const destination = next === "/app/settings" || next === "/mobile/profile" ? "Profile" : next === "/app" || next === "/mobile/wallet" ? "Wallet" : null;
   const title = destination || "Sign in";
   const body = destination === "Wallet"
     ? "Sign in to access your Zendo wallet."
@@ -290,8 +316,16 @@ export function SignInForm() {
     try {
       await api("/api/auth/pin", { method: "POST", body: JSON.stringify({ pin }) });
       toast.success("Signed in");
-      router.push(next);
-      router.refresh();
+      // A bundled Android document is a static local snapshot. Navigate to
+      // its local client-auth shell so it reads the session cookie just set by
+      // the real same-origin HTTPS API, rather than stale server-rendered HTML.
+      if (document.documentElement.dataset.zendoApp === "android") {
+        const destination = androidAuthenticatedDestination(next);
+        window.location.assign(`${destination}${destination.includes("?") ? "&" : "?"}zendo_app=android`);
+      } else {
+        router.push(next);
+        router.refresh();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "PIN failed.");
       setBusy(false);
@@ -433,8 +467,12 @@ export function RecoverForm() {
         method: "POST",
         body: JSON.stringify({ pendingId, signature, password: form.password, pin: form.pin }),
       });
-      router.push("/app");
-      router.refresh();
+      if (document.documentElement.dataset.zendoApp === "android") {
+        window.location.assign("/mobile/wallet?zendo_app=android");
+      } else {
+        router.push("/app");
+        router.refresh();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Recovery failed.");
       setBusy(false);

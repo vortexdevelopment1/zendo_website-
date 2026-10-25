@@ -121,15 +121,15 @@ export function CreateCoinForm() {
   }
 
   return (
-    <form className="zendo-grid zendo-max-w-xl zendo-gap-4" onSubmit={submit}>
+    <form className="zendo-grid zendo-max-w-xl zendo-gap-4" onSubmit={submit} autoComplete="off">
       <Field label="Name">
-        <Input value={form.name} onChange={(event) => { const name = event.target.value; setForm((current) => ({ ...current, name })); }} required />
+        <Input name="coin-name" autoComplete="off" value={form.name} onChange={(event) => { const name = event.target.value; setForm((current) => ({ ...current, name })); }} required />
       </Field>
       <Field label="Ticker" hint="2–8 letters. ZCOIN is reserved.">
-        <Input value={form.symbol} onChange={(event) => { const symbol = event.target.value.toUpperCase(); setForm((current) => ({ ...current, symbol })); }} required />
+        <Input name="coin-ticker" autoComplete="off" value={form.symbol} onChange={(event) => { const symbol = event.target.value.toUpperCase(); setForm((current) => ({ ...current, symbol })); }} required />
       </Field>
       <Field label="Description">
-        <Textarea value={form.description} onChange={(event) => { const description = event.target.value; setForm((current) => ({ ...current, description })); }} required />
+        <Textarea name="coin-description" autoComplete="off" value={form.description} onChange={(event) => { const description = event.target.value; setForm((current) => ({ ...current, description })); }} required />
       </Field>
       <div>
         <p className="zendo-mb-2 zendo-text-sm zendo-font-medium">Icon</p>
@@ -142,7 +142,7 @@ export function CreateCoinForm() {
         </div>
       </div>
       <Field label="Color">
-        <input type="range" min={0} max={360} value={form.hue} onChange={(event) => { const hue = Number(event.target.value); setForm((current) => ({ ...current, hue })); }} />
+        <input name="coin-color" autoComplete="off" type="range" min={0} max={360} value={form.hue} onChange={(event) => { const hue = Number(event.target.value); setForm((current) => ({ ...current, hue })); }} />
       </Field>
       <p className="zendo-text-sm zendo-text-muted">Creation fee is 0.2 ZCoin, taken from your wallet. Trading then uses the bonding curve until the pool opens.</p>
       {error ? <p className="zendo-text-sm zendo-text-coral">{error}</p> : null}

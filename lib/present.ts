@@ -462,10 +462,15 @@ export function presentProposals(state: State, viewer: User | null, now = Date.n
     if (status === "active" && now >= proposal.endsAt) {
       status = cast >= quorum && yes > no ? "passed" : "rejected";
     }
+    // prop_supply is a bundled investor-demo fixture, not a chain parameter
+    // change. Older persisted demo snapshots used pre-approved inflation
+    // wording. Keep the historical row intact while presenting the current
+    // fixed-supply policy accurately to investors.
+    const isLegacySupplyFixture = proposal.id === "prop_supply";
     return {
       id: proposal.id,
-      title: proposal.title,
-      body: proposal.body,
+      title: isLegacySupplyFixture ? "Confirm ZendoCoin fixed supply at 1,000,000,000" : proposal.title,
+      body: isLegacySupplyFixture ? "ZendoCoin total supply is fixed at 1,000,000,000 ZCoin. Staking rewards are paid from the existing fixed supply. No additional ZCoin is minted." : proposal.body,
       authorName: proposal.authorName,
       createdAt: proposal.createdAt,
       endsAt: proposal.endsAt,

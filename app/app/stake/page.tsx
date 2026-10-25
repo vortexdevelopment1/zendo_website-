@@ -9,7 +9,7 @@ export default function Page() {
     <div>
       <BackLink href="/app" label="Back to the wallet" />
       <h1 className="zendo-mb-2 zendo-font-display zendo-text-4xl zendo-font-bold">Stake</h1>
-      <p className="zendo-mb-4 zendo-max-w-2xl zendo-text-sm zendo-leading-6 zendo-text-muted">Delegate ZCoin to an active validator. Rewards come from inflation, skimmed by that validator&apos;s commission. Unbonding waits for the depth in the config file.</p>
+      <p className="zendo-mb-4 zendo-max-w-2xl zendo-text-sm zendo-leading-6 zendo-text-muted">Delegate ZCoin to an active validator. Rewards are paid from the existing fixed supply and are subject to that validator&apos;s commission; no additional ZCoin is minted. Unbonding waits for the depth in the config file.</p>
       <StakeDesk />
     </div>
   );

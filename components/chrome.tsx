@@ -52,12 +52,19 @@ export function BrandMark({ kind, className }: { kind: "coin" | "chain"; classNa
 export function PaperFrame({ tall = false, file = "whitepaper" }: { tall?: boolean; file?: string }) {
   const slug = /^whitepaper(-[a-z]{2})?$/.test(file) ? file : "whitepaper";
   return (
-    <div className="zendo-rounded-3xl zendo-border zendo-border-line zendo-bg-panel zendo-p-4">
+    <div className="zendo-paper-frame zendo-rounded-3xl zendo-border zendo-border-line zendo-bg-panel zendo-p-4">
       <div className="zendo-flex zendo-flex-wrap zendo-items-center zendo-justify-between zendo-gap-3">
         <p className="zendo-text-sm zendo-font-medium zendo-text-cream">White paper</p>
         <a href={`/${slug}.pdf`} download={`${slug}.pdf`} className="zendo-text-sm zendo-text-lime">Download PDF</a>
       </div>
-      <iframe title="Zendo white paper" src={`/${slug}.html`} className={cn("zendo-mt-3 zendo-w-full zendo-rounded-xl zendo-border zendo-border-line zendo-bg-white", tall ? "zendo-h-[70vh]" : "zendo-h-80")} />
+      <div className="zendo-paper-mobile-card">
+        <p>Read the Zendo technical, supply, vesting, fee and network documentation.</p>
+        <div>
+          <a href={`/whitepaper?zendo_app=android`}>View White Paper</a>
+          <a href={`/${slug}.pdf`} download={`${slug}.pdf`}>Download PDF</a>
+        </div>
+      </div>
+      <iframe title="Zendo white paper" src={`/${slug}.html`} className={cn("zendo-paper-preview zendo-mt-3 zendo-w-full zendo-rounded-xl zendo-border zendo-border-line zendo-bg-white", tall ? "zendo-h-[70vh]" : "zendo-h-80")} />
     </div>
   );
 }
@@ -96,6 +103,19 @@ export function SiteHeader() {
   const appMode = useSyncExternalStore(subscribeToAppMode, getAppModeSnapshot, getServerAppModeSnapshot);
   const [menuPath, setMenuPath] = useState(pathname);
   const [user, setUser] = useState<PublicUser | null>(null);
+  const appHref = (href: string) => {
+    if (!appMode) return href;
+    const local: Record<string, string> = {
+      "/": "/mobile",
+      "/app": "/mobile/wallet",
+      "/app/send": "/mobile/send",
+      "/app/stake": "/mobile/stake",
+      "/app/social": "/mobile/social",
+      "/app/support": "/mobile/support",
+      "/app/settings": "/mobile/profile",
+    };
+    return local[href] || href;
+  };
   if (menuPath !== pathname) {
     setMenuPath(pathname);
     setOpen(false);
@@ -123,7 +143,7 @@ export function SiteHeader() {
   async function signOut() {
     await api("/api/auth/signout", { method: "POST" });
     setUser(null);
-    router.push("/");
+    router.push(appHref("/"));
     router.refresh();
   }
 
@@ -162,8 +182,8 @@ export function SiteHeader() {
           </div>
           {user ? (
             <>
-              <Link href="/app" className="zendo-header-user zendo-text-sm zendo-text-muted hover:zendo-text-cream">{user.displayName}</Link>
-              <Button size="sm" className="zendo-header-auth-action" onClick={() => router.push("/app")}>Wallet</Button>
+              <Link href={appHref("/app")} className="zendo-header-user zendo-text-sm zendo-text-muted hover:zendo-text-cream">{user.displayName}</Link>
+              <Button size="sm" className="zendo-header-auth-action" onClick={() => router.push(appHref("/app"))}>Wallet</Button>
               <Button size="sm" className="zendo-header-auth-action" variant="ghost" onClick={signOut}>Sign out</Button>
             </>
           ) : (
@@ -181,10 +201,10 @@ export function SiteHeader() {
         <div className="zendo-mobile-drawer zendo-border-t zendo-border-line zendo-px-4 zendo-py-3">
           <div className="zendo-grid zendo-gap-1">
             {!appMode ? <div className="zendo-px-1 zendo-pb-2"><SearchBox compact /></div> : null}
-            <Link href="/" className="zendo-rounded-xl zendo-px-3 zendo-py-2">Home</Link>
+            <Link href={appHref("/")} className="zendo-rounded-xl zendo-px-3 zendo-py-2">Home</Link>
             <Link href="/launchpad" className="zendo-rounded-xl zendo-px-3 zendo-py-2">Launchpad</Link>
-            <Link href="/app/send" className="zendo-rounded-xl zendo-px-3 zendo-py-2">Send / Receive</Link>
-            <Link href="/app/stake" className="zendo-rounded-xl zendo-px-3 zendo-py-2">Staking</Link>
+            <Link href={appHref("/app/send")} className="zendo-rounded-xl zendo-px-3 zendo-py-2">Send / Receive</Link>
+            <Link href={appHref("/app/stake")} className="zendo-rounded-xl zendo-px-3 zendo-py-2">Staking</Link>
             <Link href="/governance" className="zendo-rounded-xl zendo-px-3 zendo-py-2">Governance</Link>
             <Link href="/market" className="zendo-rounded-xl zendo-px-3 zendo-py-2">Marketplace</Link>
             <Link href="/bridge" className="zendo-rounded-xl zendo-px-3 zendo-py-2">Polygon Bridge</Link>
@@ -192,10 +212,10 @@ export function SiteHeader() {
             {!appMode ? <><details className="zendo-rounded-xl zendo-px-3 zendo-py-2"><summary className="zendo-pointer">Company</summary><div className="zendo-mt-2 zendo-grid zendo-gap-1 zendo-pl-2 zendo-text-sm zendo-text-muted"><Link href="/about">About us</Link><Link href="/faq">FAQ</Link><Link href="/whitepaper">White paper</Link><Link href="/contact">Contact us</Link><Link href="/developers">Developers</Link><Link href="/onboarding">Onboarding</Link><Link href="/learn">Learn</Link><Link href="/grants">Grants</Link><Link href="/market">Marketplace</Link></div></details><details className="zendo-rounded-xl zendo-px-3 zendo-py-2"><summary className="zendo-pointer">Legal</summary><div className="zendo-mt-2 zendo-grid zendo-gap-1 zendo-pl-2 zendo-text-sm zendo-text-muted"><Link href="/privacy">Privacy policy</Link><Link href="/terms">Terms and conditions</Link></div></details></> : null}
             {user ? (
               <>
-                <Link href="/app" className="zendo-rounded-xl zendo-px-3 zendo-py-2">Wallet</Link>
-                <Link href="/app/social" className="zendo-rounded-xl zendo-px-3 zendo-py-2">Social</Link>
-                <Link href="/app/support" className="zendo-rounded-xl zendo-px-3 zendo-py-2">Support tickets</Link>
-                <Link href="/app/settings" className="zendo-rounded-xl zendo-px-3 zendo-py-2">Settings</Link>
+                <Link href={appHref("/app")} className="zendo-rounded-xl zendo-px-3 zendo-py-2">Wallet</Link>
+                <Link href={appHref("/app/social")} className="zendo-rounded-xl zendo-px-3 zendo-py-2">Social</Link>
+                <Link href={appHref("/app/support")} className="zendo-rounded-xl zendo-px-3 zendo-py-2">Support tickets</Link>
+                <Link href={appHref("/app/settings")} className="zendo-rounded-xl zendo-px-3 zendo-py-2">Settings</Link>
                 <button className="zendo-pointer zendo-rounded-xl zendo-px-3 zendo-py-2 zendo-text-left" onClick={signOut}>Sign out</button>
               </>
             ) : (
