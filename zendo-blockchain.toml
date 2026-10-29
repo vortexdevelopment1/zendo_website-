@@ -45,7 +45,7 @@ creator_bps = 30
 
 [launchpad]
 virtual_z = "30"
-graduation_z = "85"
+graduation_z = "10000"
 meme_decimals = 6
 sale_tokens = "800000000"
 total_tokens = "1000000000"

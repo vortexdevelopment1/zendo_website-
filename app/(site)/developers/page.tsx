@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CodeSample } from "@/components/code-sample";
 import { PageIntro } from "@/components/chrome";
+import { DeveloperStudio } from "@/components/developer-studio";
 
-export const metadata: Metadata = { title: "Developers" };
+export const metadata: Metadata = { title: "Developer Studio" };
 
 const tsSample = `import { createZendoClient } from "./lib/sdk";
 
@@ -35,8 +36,10 @@ try await zendo.stakeTokens(validatorId: validatorId, amount: "10")`;
 
 export default function Page() {
   return (
-    <article className="zendo-mx-auto zendo-max-w-3xl zendo-space-y-6 zendo-px-4 zendo-py-12 zendo-text-sm zendo-leading-7 zendo-text-muted">
-      <PageIntro mark="chain" kicker="Developers" title="Build on zendo-1" body="The TypeScript client talks to this node. JSON-RPC covers reads. Writes go through the signed-in wallet routes." />
+    <article className="zendo-mx-auto zendo-max-w-6xl zendo-space-y-8 zendo-px-4 zendo-py-10 zendo-text-sm zendo-leading-7 zendo-text-muted">
+      <DeveloperStudio />
+      <div className="zendo-max-w-3xl zendo-space-y-6">
+        <PageIntro mark="chain" kicker="SDK &amp; Runtime" title="Build on zendo-1" body="The TypeScript client talks to this node. JSON-RPC covers reads. Writes go through the signed-in wallet routes." />
       <CodeSample title="TypeScript" code={tsSample} href="/learn" link="Open the learn page" />
       <CodeSample title="CLI" code={cliSample} href="/explorer" link="Open the explorer" />
       <CodeSample title="Kotlin" code={kotlinSample} href="/developers" link="TypeScript, Kotlin, and Swift" />
@@ -52,6 +55,7 @@ export default function Page() {
       <p>Simultaneous transactions join one ordered batch and share one commit. Promoted launchpad slots and the optional MEV skim are the paid surfaces. MEV here is a config switch that adds 5 basis points to the protocol side of a trade. It does not reorder anyone else&apos;s transactions on a public mempool, because this node is the only producer.</p>
       <p>Nested reads are <span className="zendo-text-cream">POST /api/graphql</span>. The <span className="zendo-text-cream">live</span> query returns chain height, the latest prices, recent trades, and the launchpad book in one response. The same feed is pushed on the stream as <span className="zendo-text-cream">event: market</span>. Prices and the book are cached for one second. Set <span className="zendo-text-cream">ZENDO_REDIS_URL</span> to a Valkey or Redis URL and that cache is shared, including sign-in and PIN attempt counts. The signed session cookie stays the session. gRPC listens only when <span className="zendo-text-cream">ZENDO_GRPC_PORT</span> is set. <span className="zendo-text-cream">proto/zendo.proto</span> is the contract. Each send writes a debit and a credit into the journal and the transfers table in the same database transaction. A TigerBeetle cluster is used only when <span className="zendo-text-cream">TIGERBEETLE_ADDRESSES</span> is set on a machine that is already running TigerBeetle. This app does not start that cluster. The screens still use the existing routes.</p>
       <p>The <Link href="/whitepaper" className="zendo-text-lime">white paper</Link> is the release note for supply, vesting, and fees. <code>npm run whitepaper</code> reprints <span className="zendo-text-cream">public/whitepaper.pdf</span> from <span className="zendo-text-cream">docs/whitepaper-body.html</span> using the version in package.json.</p>
+      </div>
     </article>
   );
 }

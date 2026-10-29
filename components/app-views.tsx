@@ -7,6 +7,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/sdk";
+import { identityFromPhrase, signTx } from "@/lib/l1/browser";
+import { unitsToZ, zToUnits } from "@/lib/l1/units";
 import type { AdminView, NoticeRow, ProposalRow, PublicUser, TicketView, TxRow, ValidatorRow, WalletView } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { BrandMark, CopyButton, PaperFrame, TimeAgo } from "./chrome";
@@ -216,32 +218,55 @@ export function WalletHome() {
 
 export function SendForm() {
   const router = useRouter();
-  const [form, setForm] = useState({ to: "", token: "ZCOIN", amount: "" });
+  const [form, setForm] = useState({ to: "", amount: "", phrase: "" });
+  const [account, setAccount] = useState<PublicUser | null>(null);
+  const [quote, setQuote] = useState<{ address: string; nonce: number; balance: string; fee: string; feeZ?: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    api<{ user: PublicUser | null }>("/api/auth/me").then((result) => setAccount(result.user)).catch(() => setAccount(null));
+    api<typeof quote>("/api/wallet/nonce").then(setQuote).catch(() => setQuote(null));
+  }, []);
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     setBusy(true);
     try {
-      const tx = await api<TxRow>("/api/wallet/send", { method: "POST", body: JSON.stringify(form) });
-      toast.success("Transfer included");
-      router.push(`/explorer/tx/${tx.hash}`);
+      if (!account?.l1Address) throw new Error("This account has no native signing address.");
+      const current = await api<typeof quote>("/api/wallet/nonce");
+      setQuote(current);
+      if (!current) throw new Error("Could not load the native account nonce.");
+      const amount = zToUnits(form.amount);
+      const fee = BigInt(current.fee);
+      if (amount <= 0n) throw new Error("Enter an amount greater than zero.");
+      if (amount + fee > BigInt(current.balance)) throw new Error("Insufficient ZCOIN balance for amount plus network fee.");
+      // Signup/recovery derive the native key from the normalized account email.
+      const identity = identityFromPhrase(account.email.trim().toLowerCase(), form.phrase);
+      if (identity.address !== current.address) throw new Error("That recovery phrase does not match this account.");
+      const signed = signTx(identity, { nonce: current.nonce, to: form.to.trim().replace(/^0x/, ""), amount, fee });
+      const result = await api<{ id: string; height: number; finalized: boolean }>("/api/wallet/send", {
+        method: "POST",
+        body: JSON.stringify({ to: form.to, token: "ZCOIN", amount: form.amount, tx: signed }),
+      });
+      toast.success(`Transfer finalized in block ${result.height}`);
+      router.push(`/explorer/tx/${result.id}`);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Transfer failed.");
+    } finally {
+      setForm((current) => ({ ...current, phrase: "" }));
       setBusy(false);
     }
   }
   return (
     <form className="zendo-grid zendo-max-w-xl zendo-gap-4" onSubmit={submit}>
-      <Field label="Recipient" hint="A znd1 address. A new address is recorded on this chain when the transfer is included.">
+      <Field label="Recipient" hint="A 20-byte native Zendo address in hexadecimal.">
         <Input value={form.to} onChange={(event) => { const to = event.target.value.trim(); setForm((current) => ({ ...current, to })); }} required />
       </Field>
-      <Field label="Token" hint="ZCOIN or a launchpad ticker.">
-        <Input value={form.token} onChange={(event) => { const token = event.target.value; setForm((current) => ({ ...current, token })); }} required />
-      </Field>
-      <Field label="Amount" hint="Network fee is 0.001 ZCoin, paid in ZCoin.">
+      <Field label="Amount" hint={`Network fee is ${quote?.feeZ || (quote ? unitsToZ(quote.fee) : "0.001")} ZCOIN, paid in ZCOIN.`}>
         <Input inputMode="decimal" value={form.amount} onChange={(event) => { const amount = event.target.value; setForm((current) => ({ ...current, amount })); }} required />
       </Field>
-      <Button type="submit" disabled={busy}>{busy ? "Sending…" : "Send"}</Button>
+      <Field label="Recovery phrase" hint="Used only in memory to sign this transaction locally. It is never sent to the server or stored.">
+        <Input type="password" autoComplete="off" value={form.phrase} onChange={(event) => setForm((current) => ({ ...current, phrase: event.target.value }))} required />
+      </Field>
+      <Button type="submit" disabled={busy || !account?.l1Address}>{busy ? "Sending…" : "Sign & Send"}</Button>
     </form>
   );
 }

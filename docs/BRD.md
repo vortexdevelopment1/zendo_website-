@@ -51,7 +51,7 @@ A governance vote cannot change this schedule.
 
 ## 4. What members can do
 
-- **Launchpad.** Create a coin for 0.2 Z. The creator does not receive the supply. Price follows a constant-product curve against virtual reserves. Each trade pays 1%: 0.30% to the creator and 0.70% to the protocol, plus gas of 0.0005 Z. At 85 Z of real reserves the curve graduates into a pool. A promoted slot costs 50 Z for 24 hours. An optional extra protocol fee of 0.05% stays off until an operator turns it on, and that switch does not reorder other people’s transactions.
+- **Launchpad.** Create a coin for 0.2 Z. The creator does not receive the supply. Price follows a constant-product curve against virtual reserves. Each trade pays 1%: 0.30% to the creator and 0.70% to the protocol, plus gas of 0.0005 Z. At 10,000 Z of real reserves the curve graduates into a pool. A promoted slot costs 50 Z for 24 hours. An optional extra protocol fee of 0.05% stays off until an operator turns it on, and that switch does not reorder other people’s transactions.
 - **Wallet.** Receive with a QR, send ZCoin or a launchpad token, stake, unstake, and claim. Transfer fee is 0.001 Z. Stake and unstake cost 0.001 Z.
 - **Governance.** A proposal costs 1 Z and needs 100 Z of voting power to open. It names one allowed parameter. A vote weighs liquid ZCoin plus delegated stake, snapshotted at vote time, and costs 0.002 Z. Quorum is 1,000 Z. A passing vote writes that parameter into the live config. Later blocks use it.
 - **Grants.** Same voting power. Yes votes need 1,000 ZCoin. On a live node the payout waits 60 seconds. A paid grant moves Z from the treasury to the author and does not mint new supply.

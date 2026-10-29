@@ -14,7 +14,9 @@ function fixedHex(value: unknown, bytes: number, field: string): string {
 function units(value: unknown, field: string): string {
   const text = typeof value === "bigint" ? value.toString() : typeof value === "number" ? String(value) : typeof value === "string" ? value : "";
   if (!/^[0-9]+$/.test(text)) throw new ZendoError(`${field} must be a whole number of base units.`, 400, "malformed");
-  return BigInt(text).toString();
+  const parsed = BigInt(text);
+  if (parsed >= (1n << 128n)) throw new ZendoError(`${field} is outside the native transaction range.`, 400, "malformed");
+  return parsed.toString();
 }
 
 function dataHex(value: unknown): string {
@@ -57,6 +59,14 @@ export function verifyL1Tx(input: unknown): L1Tx {
 /** The 20-byte L1 address that controls this transaction, derived from its sender public key. */
 export function senderAddress(tx: L1Tx): string {
   return addressFromPublic(Buffer.from(tx.from, "hex"));
+}
+
+/** Ensures a signed transaction is authorized by the authenticated native account. */
+export function assertSenderMatchesAddress(tx: L1Tx, expectedAddress: string): void {
+  const expected = expectedAddress.trim().toLowerCase();
+  if (!/^[0-9a-f]{40}$/.test(expected) || senderAddress(tx) !== expected) {
+    throw new ZendoError("The signed transaction does not belong to this account.", 403, "signature");
+  }
 }
 
 /** The address a transaction came from, for scoping read-model updates to the signed sender. */

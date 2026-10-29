@@ -108,6 +108,10 @@ export type Coin = {
   symbol: string;
   description: string;
   emoji: string;
+  tokenImage?: string | null;
+  twitterUrl?: string | null;
+  telegramUrl?: string | null;
+  websiteUrl?: string | null;
   hue: number;
   creator: string;
   creatorUserId: string | null;

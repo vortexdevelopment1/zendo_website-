@@ -159,7 +159,7 @@ Sessions are httpOnly cookies. In production they are marked secure, so the brow
 
 ## What you can do
 
-- **Launchpad** — create a coin, buy and sell on the curve, reply, vote, and report. A coin graduates into a pool after 85 Z of real reserves.
+- **Launchpad** — create a coin, buy and sell on the curve, reply, vote, and report. A coin graduates into a pool after 10,000 Z of real reserves.
 - **Wallet** — receive (QR), send ZCoin or a launchpad token, stake, and claim rewards.
 - **Governance** — token-weighted proposals. A passing vote writes one allowed parameter into the live chain config. Supply, decimals, and vesting stay fixed.
 - **Slashing** — jailing a validator moves 10% of its self-stake and delegations to the treasury and pauses rewards. A second jail does not slash again.

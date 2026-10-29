@@ -17,7 +17,7 @@ export { ZERO_ADDRESS, buy, delegate, deploy, launchCreate, propose, sell, trans
 export type { TxInput } from "./operations";
 export { onChainBalance, confirm, relay, settle } from "./settlement";
 export type { Settled, SettleOptions } from "./settlement";
-export { addressOf, senderAddress, verifyL1Tx } from "./verify";
+export { addressOf, assertSenderMatchesAddress, senderAddress, verifyL1Tx } from "./verify";
 export { L1Client } from "./client";
 export type { Power, Receipt, Simulation } from "./client";
 export { assertSimulationAllowed, custodialSigningAllowed, masterSecretFromEnv, rpcUrlFromEnv, signerForUser, simulationAllowed } from "./config";

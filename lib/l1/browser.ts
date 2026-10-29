@@ -20,6 +20,7 @@ const text = new TextEncoder();
 const TRANSFER_DOMAIN = text.encode("ZENDO_TX_V1");
 const DATA_DOMAIN = text.encode("ZENDO_TX_V2");
 const PHRASE_DOMAIN = "zendo-l1-seed:";
+const LAUNCH_MARKER = 0xf0;
 
 export function toHex(bytes: Uint8Array): string {
   let out = "";
@@ -109,6 +110,16 @@ export function signTx(
     signature: toHex(identity.sign(message)),
     data: input.data && input.data.length > 0 ? toHex(input.data) : "",
   };
+}
+
+/** Encodes the existing native launch operation for a browser-signed transaction. */
+export function launchCreateData(programHex: string): Uint8Array {
+  const clean = programHex.trim().replace(/^0x/, "");
+  if (!/^([0-9a-fA-F]{2})+$/.test(clean)) throw new Error("The Zendo launch program is unavailable.");
+  const data = new Uint8Array(1 + clean.length / 2);
+  data[0] = LAUNCH_MARKER;
+  for (let i = 0; i < clean.length; i += 2) data[1 + i / 2] = Number.parseInt(clean.slice(i, i + 2), 16);
+  return data;
 }
 
 /**

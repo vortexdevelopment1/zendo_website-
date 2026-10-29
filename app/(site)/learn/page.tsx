@@ -12,7 +12,7 @@ const modules = [
   },
   {
     title: "The curve",
-    body: "A buy moves Z into the coin escrow and tokens out along a constant product. One percent is the fee. At 85 Z of real reserves the coin graduates into a pool. The lab below quotes that math on a live coin.",
+    body: "A buy moves Z into the coin escrow and tokens out along a constant product. One percent is the fee. At 10,000 Z of real reserves the coin graduates into a pool. The lab below quotes that math on a live coin.",
   },
   {
     title: "The node",

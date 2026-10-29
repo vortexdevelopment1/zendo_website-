@@ -145,7 +145,7 @@ export function loadConfig(): ZendoConfig {
     tradeBps: num(fees.trade_bps, 100),
     creatorBps: num(fees.creator_bps, 30),
     virtualZ: str(launchpad.virtual_z, "30"),
-    graduationZ: str(launchpad.graduation_z, "85"),
+    graduationZ: str(launchpad.graduation_z, "10000"),
     memeDecimals: num(launchpad.meme_decimals, 6),
     saleTokens: str(launchpad.sale_tokens, "800000000"),
     totalTokens: str(launchpad.total_tokens, "1000000000"),

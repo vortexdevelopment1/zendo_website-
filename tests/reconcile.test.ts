@@ -128,6 +128,17 @@ test("unmapped parties and non-transfer activity are reported, not applied", asy
   assert.equal(model.accounts[alice.address].balances.ZCOIN, "1000");
 });
 
+test("an external finalized deposit credits a mapped wallet", async () => {
+  const model = baseModel();
+  const stranger = identityFromSeed("external", Buffer.alloc(32, 8));
+  const blocks: ChainBlock[] = [{ height: 1, txs: [transfer("tx-deposit", stranger.publicKey, alice.address, "10", "1")] }];
+  const report = await reconcile(model, source(blocks, 1), { feeSink: treasury });
+
+  assert.equal(report.applied, 1);
+  assert.equal(report.unmapped, 0);
+  assert.equal(model.accounts[alice.address].balances.ZCOIN, "1010");
+});
+
 test("a missing block stops the pass, is reported, and does not advance the height", async () => {
   const model = baseModel();
   const blocks: ChainBlock[] = [{ height: 1, txs: [transfer("tx1", alice.publicKey, bob.address, "10", "1")] }];

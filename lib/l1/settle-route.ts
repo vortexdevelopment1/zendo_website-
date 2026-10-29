@@ -4,7 +4,8 @@ import { L1Client } from "./client";
 import { custodialSigningAllowed, signerForUser } from "./config";
 import type { TxInput } from "./operations";
 import { relay, settle, type Settled } from "./settlement";
-import { verifyL1Tx } from "./verify";
+import { assertSenderMatchesAddress, verifyL1Tx } from "./verify";
+import { reconcileFromL1Internal, userById } from "../engine";
 
 export type SettleRouteInput = {
   userId: string;
@@ -32,7 +33,16 @@ export async function settleRoute(input: SettleRouteInput): Promise<SettledRoute
 
   let settled: Settled;
   if (input.tx !== undefined && input.tx !== null) {
-    settled = await relay(client, verifyL1Tx(input.tx), { timeoutMs });
+    const tx = verifyL1Tx(input.tx);
+    const user = await userById(input.userId);
+    if (!user?.l1Address) throw new ZendoError("This account has no native signing address.", 403, "signature");
+    assertSenderMatchesAddress(tx, user.l1Address);
+    const [nonce, balance] = await Promise.all([client.nonce(user.l1Address), client.balance(user.l1Address)]);
+    if (tx.nonce !== nonce) throw new ZendoError("The transaction nonce is stale. Refresh and sign again.", 409, "signature");
+    if (BigInt(tx.amount) + BigInt(tx.fee) > BigInt(balance)) {
+      throw new ZendoError("Insufficient native balance for amount plus network fee.", 400, "insufficient");
+    }
+    settled = await relay(client, tx, { timeoutMs });
   } else if (custodialSigningAllowed()) {
     const identity = signerForUser(input.userId);
     settled = await settle(client, identity, await input.build(), { fee: input.fee ?? 10_000n, timeoutMs });
@@ -43,6 +53,9 @@ export async function settleRoute(input: SettleRouteInput): Promise<SettledRoute
   let mirrored = false;
   if (input.mirror) {
     try {
+      // Refresh the projection from finalized L1 state before mirroring the route-specific record.
+      // This is server-internal; no client-supplied balance or public reconciliation endpoint is used.
+      await reconcileFromL1Internal();
       await input.mirror();
       mirrored = true;
     } catch (error) {

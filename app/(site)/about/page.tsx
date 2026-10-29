@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageIntro } from "@/components/chrome";
 import { CONTACT_EMAIL } from "@/lib/seed";
+import { CompanyArt } from "@/components/reference-art";
 
 export const metadata: Metadata = { title: "About us" };
 
 export default function Page() {
   return (
-    <article className="zendo-mx-auto zendo-max-w-3xl zendo-px-4 zendo-py-12">
-      <PageIntro kicker="Company" title="About Zendo" body="Zendo is a persistent chain an operator runs on one machine: proof-of-stake blocks, a coin with a public supply, and a launchpad that does not ask the operator to hold user keys." />
+    <article className="zendo-feature-page zendo-dashboard-page zendo-mx-auto zendo-max-w-6xl zendo-px-4 zendo-py-12">
+      <div className="zendo-feature-grid zendo-company-hero"><PageIntro kicker="Company" title="About Zendo" body="Zendo is a persistent chain an operator runs on one machine: proof-of-stake blocks, a coin with a public supply, and a launchpad that does not ask the operator to hold user keys." /><div className="zendo-reference-panel"><CompanyArt /></div></div>
       <div className="zendo-space-y-4 zendo-text-sm zendo-leading-7 zendo-text-muted">
         <p>The node keeps an append-only block log, a mempool, and a state commitment over account balances. Active validators take turns proposing. Blocks are treated as finalized after the depth in <span className="zendo-text-cream">zendo-blockchain.toml</span>. A shorter competing tip loses the fork-choice drill on the operator desk. Malformed headers are rejected and counted.</p>
         <p>ZendoCoin is the gas and governance asset. The ticker is $ZCoin. The total supply is fixed at one billion. Louis Conner, Co-founder and President, holds 200,000,000. Prabhat Agrawal holds 50,000,000. Pratyaksh Lutare holds 50,000,000. Those 300,000,000 stay in separate vesting locks. The other 700,000,000 is public and liquid, including the 100,000 system-wallet seed. The vesting clock is unset until this app is live online for public use. That first public visit records the date once, with no operator step. Nothing moves during the 120-day cliff after that date. Then the chain itself moves 25% of each founder allocation into that founder wallet at each anniversary for four years. Staking rewards are paid from the existing supply when a delegator claims; no additional ZCoin is minted.</p>

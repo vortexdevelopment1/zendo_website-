@@ -20,6 +20,7 @@
     "whitepaper": "node scripts/print-whitepaper.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.1157.0",
     "@grpc/grpc-js": "^1.14.6",
     "@grpc/proto-loader": "^0.8.1",
     "@noble/curves": "^2.4.0",
@@ -38,7 +39,7 @@
     "ioredis": "^6.0.0",
     "jose": "^6.2.12",
     "lucide-react": "^1.47.0",
-    "next": "16.4.0",
+    "next": "16.4.3",
     "pg": "^8.23.1",
     "qrcode": "^1.5.4",
     "react": "19.2.8",
@@ -47,7 +48,7 @@
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
     "ws": "^8.22.0",
-    "zod": "^4.6.5"
+    "zod": "4.6.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -59,7 +60,7 @@
     "@types/react-dom": "^19",
     "@types/ws": "^8.18.2",
     "eslint": "^9",
-    "eslint-config-next": "16.4.0",
+    "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"

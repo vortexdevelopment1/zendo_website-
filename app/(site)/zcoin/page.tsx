@@ -4,6 +4,7 @@ import { PageIntro } from "@/components/chrome";
 import { ZendoCoinZipLink } from "@/components/zendocoin-zip";
 import Link from "next/link";
 import { Panel } from "@/components/ui";
+import { ZCoinArt } from "@/components/reference-art";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "ZendoCoin" };
@@ -11,12 +12,12 @@ export const metadata: Metadata = { title: "ZendoCoin" };
 export default async function Page() {
   const coin = await zcoin();
   return (
-    <div className="zendo-mx-auto zendo-max-w-3xl zendo-px-4 zendo-py-12">
+    <div className="zendo-dashboard-page zendo-mx-auto zendo-max-w-6xl zendo-px-4 zendo-py-12">
       <PageIntro mark="coin" kicker={coin.symbol} title="ZendoCoin" body={coin.launched ? `Fixed total supply of ${coin.supply} ZCoin with ${coin.decimals} decimals. Staking rewards are paid from the existing supply; no additional ZCoin is minted. Ticker ${coin.symbol}. Louis Conner is Co-founder and President. Public launch started ${new Date(coin.anchor || 0).toUTCString()}. The 120-day cliff runs from that moment.` : `Fixed total supply of ${coin.supply} ZCoin with ${coin.decimals} decimals. Staking rewards are paid from the existing supply; no additional ZCoin is minted. Ticker ${coin.symbol}. Louis Conner is Co-founder and President. Public launch has not happened, so founder coins stay locked. The 120-day cliff starts when this app is first live for public use.`} />
-      <div className="zendo-mb-4 zendo-flex zendo-flex-wrap zendo-gap-3">
+      <div className="zendo-zcoin-intro"><ZCoinArt /><div className="zendo-mb-4 zendo-flex zendo-flex-wrap zendo-gap-3">
         <ZendoCoinZipLink className="zendo-pointer zendo-inline-flex zendo-h-12 zendo-items-center zendo-justify-center zendo-rounded-full zendo-bg-gold zendo-px-5 zendo-text-base zendo-font-semibold zendo-text-ink">Download ZendoCoin-Polygon_Mainnet.zip</ZendoCoinZipLink>
         <Link href="/contracts" className="zendo-pointer zendo-inline-flex zendo-h-12 zendo-items-center zendo-justify-center zendo-rounded-full zendo-bg-lime zendo-px-5 zendo-text-base zendo-font-semibold zendo-text-ink">Copy the contracts</Link>
-      </div>
+      </div></div>
       <div className="zendo-grid zendo-gap-3 zendo-sm:zendo-grid-cols-2">
         {[
           ["Fixed total supply", coin.supply],

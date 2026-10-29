@@ -57,3 +57,14 @@ test("a browser-signed transaction verifies under the server checker", async () 
   const verified = verifyL1Tx(tx);
   assert.equal(verified.amount, "5000000000000000000");
 });
+
+test("the authoritative sender check accepts only the authenticated native address", async () => {
+  const { assertSenderMatchesAddress, verifyL1Tx } = await import("../lib/l1/index.ts");
+  const web = webFromSeed("bound-user", new Uint8Array(SEED));
+  const tx = webSignTx(web, { nonce: 0, to: "22".repeat(20), amount: 1, fee: 10_000 });
+  const verified = verifyL1Tx(tx);
+  assert.doesNotThrow(() => assertSenderMatchesAddress(verified, web.address));
+  assert.throws(() => assertSenderMatchesAddress(verified, "11".repeat(20)), /does not belong/);
+  assert.throws(() => verifyL1Tx({ ...tx, amount: "2" }), /signature does not match/);
+  assert.throws(() => verifyL1Tx({ ...tx, amount: (1n << 128n).toString() }), /native transaction range/);
+});

@@ -2,7 +2,7 @@ import { requireUser } from "@/lib/auth";
 import { ZendoError, fail, readBody } from "@/lib/errors";
 import { L1Client } from "@/lib/l1/client";
 import { relay } from "@/lib/l1/settlement";
-import { verifyL1Tx } from "@/lib/l1/verify";
+import { assertSenderMatchesAddress, verifyL1Tx } from "@/lib/l1/verify";
 
 export const dynamic = "force-dynamic";
 
@@ -14,10 +14,17 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(req: Request) {
   try {
-    await requireUser();
+    const user = await requireUser();
     const body = await readBody(req);
     const tx = verifyL1Tx(body.tx);
+    if (!user.l1Address) throw new ZendoError("This account has no native signing address.", 403, "signature");
+    assertSenderMatchesAddress(tx, user.l1Address);
     const client = L1Client.fromEnv();
+    const [nonce, balance] = await Promise.all([client.nonce(user.l1Address), client.balance(user.l1Address)]);
+    if (tx.nonce !== nonce) throw new ZendoError("The transaction nonce is stale. Refresh and sign again.", 409, "signature");
+    if (BigInt(tx.amount) + BigInt(tx.fee) > BigInt(balance)) {
+      throw new ZendoError("Insufficient native balance for amount plus network fee.", 400, "insufficient");
+    }
     const settled = await relay(client, tx, { timeoutMs: 20_000 });
     return Response.json({ ok: true, id: settled.id, height: settled.height, finalized: settled.finalized });
   } catch (error) {

@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import { PageIntro } from "@/components/chrome";
 import { CONTACT_EMAIL } from "@/lib/seed";
+import { LegalArt } from "@/components/reference-art";
 
 export const metadata: Metadata = { title: "Privacy policy" };
 
 export default function Page() {
   return (
-    <article className="zendo-mx-auto zendo-max-w-3xl zendo-space-y-4 zendo-px-4 zendo-py-12 zendo-text-sm zendo-leading-7 zendo-text-muted">
-      <PageIntro kicker="Legal" title="Privacy policy" body="This policy describes the Zendo software in this repository. It is the privacy notice linked from the Android and iOS shells." />
+    <article className="zendo-feature-page zendo-dashboard-page zendo-mx-auto zendo-max-w-6xl zendo-space-y-4 zendo-px-4 zendo-py-12 zendo-text-sm zendo-leading-7 zendo-text-muted">
+      <div className="zendo-legal-hero">
+        <PageIntro kicker="Legal" title="Privacy policy" body="This policy describes the Zendo software in this repository. It is the privacy notice linked from the Android and iOS shells." />
+        <div className="zendo-reference-panel"><LegalArt /></div>
+      </div>
       <h2 className="zendo-font-display zendo-text-xl zendo-font-bold zendo-text-cream">1. Who this covers</h2>
       <p>This policy applies to the node you are using and to the web pages that node serves, including when those pages are opened in a browser, from a home-screen icon, or inside the Android or iOS wrapper. The wrapper does not keep a second copy of the ledger.</p>
       <h2 className="zendo-font-display zendo-text-xl zendo-font-bold zendo-text-cream">2. Account data</h2>

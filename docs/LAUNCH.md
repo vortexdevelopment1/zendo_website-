@@ -54,7 +54,7 @@ ZendoCoin supply is 1,000,000,000 with 18 decimals. The ticker is $ZCoin. Founde
 
 A proposal names one allowed parameter, costs 1 ZCoin, and needs 100 ZCoin of voting power. It passes with more yes than no and at least 1,000 ZCoin cast, then the next blocks use the new value. Supply, decimals, and vesting cannot be changed by a vote. Grants pay 1 to 5,000 ZCoin from the treasury. A marketplace listing costs 1 ZCoin and is a ledger transaction. Each address leaves one rating from 1 to 5.
 
-The launchpad creates a coin for 0.2 ZCoin. Trades use a constant-product curve, pay 1% (0.30% creator, 0.70% protocol) plus gas, graduate at 85 ZCoin of real reserves, and can be promoted for 50 ZCoin for 24 hours.
+The launchpad creates a coin for 0.2 ZCoin. Trades use a constant-product curve, pay 1% (0.30% creator, 0.70% protocol) plus gas, graduate at 10,000 ZCoin of real reserves, and can be promoted for 50 ZCoin for 24 hours.
 
 ## App surfaces
 

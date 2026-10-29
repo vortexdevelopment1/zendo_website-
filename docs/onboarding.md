@@ -50,7 +50,7 @@ A proposal names one live parameter, such as the trade fee or the block time. It
 
 Open Launchpad, then Create a coin. Choose a name, a ticker of 2 to 8 letters or numbers that starts with a letter, and a description of at least 10 characters. ZCOIN and ZENDO are reserved tickers. Pick an icon from the set. Creation costs 0.2 ZCoin, so the wallet has to hold that amount first.
 
-The coin opens on a bonding curve. A buy pays ZCoin in, takes a 1 percent fee, and receives tokens. Of that fee, 0.30 percent of the trade goes to the creator and 0.70 percent goes to the protocol. Gas of 0.0005 ZCoin is charged on top. A sell returns ZCoin along the same curve, so you receive less than the pool price before the fee. When real reserves reach 85 ZCoin, the coin graduates into a pool. You can reply, vote the coin up or down, and report it from the coin page. Promotion is a separate paid spotlight, described with the other community programs below.
+The coin opens on a bonding curve. A buy pays ZCoin in, takes a 1 percent fee, and receives tokens. Of that fee, 0.30 percent of the trade goes to the creator and 0.70 percent goes to the protocol. Gas of 0.0005 ZCoin is charged on top. A sell returns ZCoin along the same curve, so you receive less than the pool price before the fee. When real reserves reach 10,000 ZCoin, the coin graduates into a pool. You can reply, vote the coin up or down, and report it from the coin page. Promotion is a separate paid spotlight, described with the other community programs below.
 
 ## Referral recognition
 

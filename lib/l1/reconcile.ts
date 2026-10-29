@@ -176,15 +176,17 @@ export function applyReconcile(
       }
       const sender = resolveModelAddress(model, addressFromPublic(Buffer.from(tx.from, "hex")));
       const recipient = resolveModelAddress(model, tx.to);
-      if (!sender || !recipient) {
+      if (!recipient) {
         report.unmapped += 1;
         continue;
       }
       const amount = BigInt(tx.amount);
       const fee = BigInt(tx.fee || "0");
-      sub(model, sender, "ZCOIN", amount + fee);
+      // Deposits from validator/faucet/external wallets may have no application account to debit.
+      // They are still authoritative incoming L1 funds and must credit the mapped recipient once.
+      if (sender) sub(model, sender, "ZCOIN", amount + fee);
       add(model, recipient, "ZCOIN", amount);
-      if (fee > 0n) {
+      if (sender && fee > 0n) {
         fees += fee;
         if (options.feeSink && model.accounts[options.feeSink]) add(model, options.feeSink, "ZCOIN", fee);
       }

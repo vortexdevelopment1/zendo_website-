@@ -27,7 +27,7 @@ const ITEMS = [
 
 export default function Page() {
   return (
-    <div className="zendo-mx-auto zendo-max-w-3xl zendo-px-4 zendo-py-12">
+    <div className="zendo-dashboard-page zendo-mx-auto zendo-max-w-3xl zendo-px-4 zendo-py-12">
       <PageIntro kicker="Company" title="FAQ" body="Straight answers for the zendo-1 chain you are looking at." />
       <FaqList items={ITEMS} />
     </div>

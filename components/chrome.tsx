@@ -147,19 +147,39 @@ export function SiteHeader() {
     router.refresh();
   }
 
+  const connectedAddress = user?.l1Address || user?.address || "";
+  const connectedLabel = connectedAddress ? `${connectedAddress.slice(0, 8)}…${connectedAddress.slice(-6)}` : "Connected account";
+
   return (
-    <header className="zendo-site-header zendo-sticky zendo-top-0 zendo-z-40 zendo-border-b zendo-border-line/80 zendo-bg-ink/85 zendo-backdrop-blur-md">
+    <header className={`zendo-site-header zendo-sticky zendo-top-0 zendo-z-40 zendo-border-b zendo-border-line/80 zendo-bg-ink/85 zendo-backdrop-blur-md${pathname === "/" ? " zendo-homepage-header" : ""}`}>
       <a href="#content" className="zendo-sr-only focus:zendo-not-sr-only focus:zendo-absolute focus:zendo-left-4 focus:zendo-top-3 focus:zendo-z-50 focus:zendo-rounded-lg focus:zendo-bg-lime focus:zendo-px-3 focus:zendo-py-2 focus:zendo-text-ink">
         Skip to content
       </a>
       <div className="zendo-site-container zendo-site-header-inner zendo-flex zendo-h-[4.5rem] zendo-items-center">
         <Logo className="zendo-header-logo" />
         <nav className="zendo-desktop-nav" aria-label="Primary navigation">
-          <Link href="/launchpad" className="zendo-rounded-full zendo-px-3 zendo-py-2 zendo-text-sm hover:zendo-bg-white/5">Launchpad</Link>
-          <Link href="/explorer" className="zendo-rounded-full zendo-px-3 zendo-py-2 zendo-text-sm hover:zendo-bg-white/5">Explorer</Link>
-          <Link href="/search" className="zendo-rounded-full zendo-px-3 zendo-py-2 zendo-text-sm hover:zendo-bg-white/5">Search</Link>
-          <Link href="/zcoin" className="zendo-rounded-full zendo-px-3 zendo-py-2 zendo-text-sm hover:zendo-bg-white/5">ZCoin</Link>
-          <Link href="/bridge" className="zendo-rounded-full zendo-px-3 zendo-py-2 zendo-text-sm hover:zendo-bg-white/5">Bridge</Link>
+          {([
+            ["/", "Home", false],
+            ["/launchpad", "Launchpad", true],
+            ["/developers", "Developer", true],
+            ["/explorer", "Explorer", true],
+            ["/zcoin", "ZCoin", true],
+            ["/bridge", "Bridge", true],
+            ["/app/stake", "Staking", true],
+            ["/governance", "Governance", true],
+          ] as [string, string, boolean][]).map(([href, label, startsWith]) => {
+            const isActive = startsWith ? pathname.startsWith(href) : pathname === href;
+            return (
+              <Link
+                key={href}
+                href={href}
+                style={isActive ? { color: "#c8ff00", borderBottom: "2px solid #c8ff00", borderRadius: 0, paddingBottom: "calc(.5rem - 2px)" } : {}}
+                className={cn("zendo-rounded-full zendo-px-3 zendo-py-2 zendo-text-sm hover:zendo-bg-white/5", isActive ? "zendo-text-lime" : "")}
+              >
+                {label}
+              </Link>
+            );
+          })}
           <Drop label="Company">
             <MenuLink href="/about" title="About us" detail="Chain, coin, and launchpad in one node" />
             <MenuLink href="/faq" title="FAQ" detail="Wallets, fees, vesting, and resets" />
@@ -177,10 +197,16 @@ export function SiteHeader() {
           </Drop>
         </nav>
         <div className="zendo-header-actions">
-          <div className="zendo-header-search">
+          {pathname === "/" ? (
+            <>
+              <Link href={user ? appHref("/app") : "/signin"} className="zendo-homepage-account-control" aria-label={user ? "Open wallet" : "Open account"}>{user ? user.displayName.slice(0, 1).toUpperCase() : "Z"}</Link>
+              <Button size="sm" className="zendo-homepage-connect" title={user ? `Native account ${connectedAddress}` : undefined} onClick={() => router.push(user ? appHref("/app") : "/signin")}>
+                {user ? "My Wallet" : "Connect ZendoWallet"}
+              </Button>
+            </>
+          ) : <><div className="zendo-header-search">
             <SearchBox compact />
-          </div>
-          {user ? (
+          </div>{user ? (
             <>
               <Link href={appHref("/app")} className="zendo-header-user zendo-text-sm zendo-text-muted hover:zendo-text-cream">{user.displayName}</Link>
               <Button size="sm" className="zendo-header-auth-action" onClick={() => router.push(appHref("/app"))}>Wallet</Button>
@@ -191,7 +217,7 @@ export function SiteHeader() {
               <Button size="sm" className="zendo-header-auth-action" variant="ghost" onClick={() => router.push("/signin")}>Log In</Button>
               <Button size="sm" className="zendo-header-auth-action" onClick={() => router.push("/signup")}>Sign Up</Button>
             </>
-          )}
+          )}</>}
         </div>
         <button className="zendo-header-menu zendo-pointer zendo-ml-auto zendo-rounded-lg zendo-p-2" aria-expanded={open} aria-label="Open menu" onClick={() => setOpen((value) => !value)}>
           {open ? <X /> : <Menu />}

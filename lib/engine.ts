@@ -62,8 +62,10 @@ import {
   nameOf,
   passwordOf,
   pinOf,
+  optionalHttpUrlOf,
   sideOf,
   symbolOf,
+  tokenImageOf,
   textOf,
 } from "./validate";
 import { generatePhrase, normalizePhrase, phraseText } from "./words";
@@ -877,7 +879,7 @@ function findCoin(state: State, mint: string): Coin {
 
 function mintCoin(
   state: State,
-  input: { creator: string; creatorUserId: string | null; name: string; symbol: string; description: string; emoji: string; hue: number; at: number; fee: boolean; boost: number },
+  input: { creator: string; creatorUserId: string | null; name: string; symbol: string; description: string; emoji: string; hue: number; tokenImage: string | null; twitterUrl: string | null; telegramUrl: string | null; websiteUrl: string | null; at: number; fee: boolean; boost: number },
 ): Coin {
   if (!getConfig().features.launchpad) throw new ZendoError("The launchpad is switched off.");
   if (state.coins.some((coin) => coin.symbol === input.symbol)) throw new ZendoError("That ticker is already taken.");
@@ -896,6 +898,10 @@ function mintCoin(
     symbol: input.symbol,
     description: input.description,
     emoji: input.emoji,
+    tokenImage: input.tokenImage,
+    twitterUrl: input.twitterUrl,
+    telegramUrl: input.telegramUrl,
+    websiteUrl: input.websiteUrl,
     hue: input.hue,
     creator: input.creator,
     creatorUserId: input.creatorUserId,
@@ -1258,6 +1264,10 @@ export const createCoin = (userId: string, input: Record<string, unknown>) =>
       description: textOf(input.description, "A description", 10, 280),
       emoji: emojiOf(input.emoji),
       hue: hueOf(input.hue),
+      tokenImage: tokenImageOf(input.tokenImage),
+      twitterUrl: optionalHttpUrlOf(input.twitterUrl, "X / Twitter link"),
+      telegramUrl: optionalHttpUrlOf(input.telegramUrl, "Telegram link"),
+      websiteUrl: optionalHttpUrlOf(input.websiteUrl, "Website link"),
       at: Date.now(),
       fee: true,
       boost: user.referredBy ? 15 : 0,
@@ -1344,7 +1354,8 @@ export const send = (userId: string, to: unknown, token: unknown, amount: unknow
   mutate((state) => {
     const user = userByIdSync(state, userId);
     if (!ownsAccount(user.address)) throw new ZendoError("This account writes on another shard.");
-    const dest = addressOf(to);
+    const rawDestination = typeof to === "string" ? to.trim().toLowerCase() : "";
+    const dest = /^[0-9a-f]{40}$/.test(rawDestination) ? rawDestination : addressOf(to);
     if (dest === user.address) throw new ZendoError("Choose a different recipient.");
     if (!state.accounts[dest]) {
       state.accounts[dest] = { address: dest, userId: null, label: "External wallet", balances: {}, nonce: 0 };
@@ -3089,12 +3100,8 @@ export const reconcileStatus = (userId: string) =>
  * applies the deltas inside one ordered commit, guarded by transaction id. Pass `rebuild` to clear the
  * checkpoint and replay every confirmed transfer from genesis.
  */
-export async function reconcileFromL1(userId: string, options: { rebuild?: boolean } = {}): Promise<ReconcileReport> {
-  await view((state) => {
-    const user = userByIdSync(state, userId);
-    if (user.role !== "admin") throw new ZendoError("Operator access only.", 403);
-    return true;
-  });
+/** Internal server path used after a route has already verified a finalized transaction. */
+export async function reconcileFromL1Internal(options: { rebuild?: boolean } = {}): Promise<ReconcileReport> {
   const source = L1Client.fromEnv().reconcileSource();
   const rebuild = options.rebuild === true;
   const from = rebuild ? 1 : await view((state) => (state.reconcileHeight ?? 0) + 1);
@@ -3107,6 +3114,15 @@ export async function reconcileFromL1(userId: string, options: { rebuild?: boole
     log(state, "l1", "reconcile", `${report.applied} applied, ${report.duplicate} duplicate, ${report.unmapped} unmapped, ${report.errors.length} errors`);
     return report;
   });
+}
+
+export async function reconcileFromL1(userId: string, options: { rebuild?: boolean } = {}): Promise<ReconcileReport> {
+  await view((state) => {
+    const user = userByIdSync(state, userId);
+    if (user.role !== "admin") throw new ZendoError("Operator access only.", 403);
+    return true;
+  });
+  return reconcileFromL1Internal(options);
 }
 
 export async function notePublicRequest(headerStore: { get(name: string): string | null }) {

@@ -67,6 +67,29 @@ export function hueOf(value: unknown): number {
   return Math.max(0, Math.min(360, Math.round(n)));
 }
 
+export function optionalHttpUrlOf(value: unknown, label: string): string | null {
+  if (value === undefined || value === null || value === "") return null;
+  if (typeof value !== "string" || value.length > 500) throw new ZendoError(`${label} must be a valid HTTP or HTTPS URL.`);
+  let parsed: URL;
+  try {
+    parsed = new URL(value.trim());
+  } catch {
+    throw new ZendoError(`${label} must be a valid HTTP or HTTPS URL.`);
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") throw new ZendoError(`${label} must use HTTP or HTTPS.`);
+  parsed.username = "";
+  parsed.password = "";
+  return parsed.toString();
+}
+
+export function tokenImageOf(value: unknown): string | null {
+  if (value === undefined || value === null || value === "") return null;
+  if (typeof value !== "string" || !value.startsWith("/api/coins/media/") || value.length > 180) {
+    throw new ZendoError("Token image reference is invalid.");
+  }
+  return value;
+}
+
 export function addressOf(value: unknown): string {
   if (typeof value !== "string" || !/^znd1[0-9a-f]{38}$/.test(value)) {
     throw new ZendoError("Enter a Zendo address that starts with znd1.");

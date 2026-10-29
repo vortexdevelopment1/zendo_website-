@@ -4,9 +4,10 @@
 @config "../tailwind.config.mjs";
 
 @theme inline {
-  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-syne), ui-sans-serif, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  /* Local/system stacks keep production builds independent of Google Fonts. */
+  --font-sans: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  --font-display: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  --font-mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
   --color-ink: #0A0A0A;
   --color-panel: #111111;
   --color-panel-2: #1b2016;
@@ -45,7 +46,8 @@ html {
 }
 
 .zendo-site-header-inner {
-  gap: 1.25rem;
+  gap: .9rem;
+  height: 4rem;
 }
 
 .zendo-header-logo {
@@ -73,6 +75,67 @@ html {
 .zendo-home-hero-copy {
   max-width: 43rem;
 }
+
+.zendo-home-hero-art {
+  position: relative;
+  height:32rem;
+  min-height: 32rem;
+  margin-right: clamp(-5rem, -4vw, -1rem);
+  overflow: hidden;
+  isolation: isolate;
+  background: #04060f;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 100%);
+}
+
+.zendo-home-hero-art::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(7,8,7,.15) 0%, transparent 12%, transparent 88%, rgba(7,8,7,.55) 100%),
+    linear-gradient(90deg, #070807 0%, rgba(7,8,7,.62) 18%, rgba(7,8,7,.2) 42%, transparent 58%);
+  content: "";
+  pointer-events: none;
+}
+
+.zendo-home-hero-art img { position:relative; z-index:0; display:block; width:100%; height:100%; min-height:32rem; object-fit:cover; object-position:62% center; }
+
+.zendo-home-stats-wrap { position: relative; z-index: 2; }
+.zendo-homepage-shell > .zendo-home-hero,
+.zendo-homepage-shell > .zendo-home-stats-wrap,
+.zendo-homepage-shell > section.zendo-max-w-6xl { width:min(100% - 1.5rem, 90rem); max-width:90rem; }
+.zendo-home-reference-panel { position:relative; width:min(100% - 1.5rem, 90rem); margin:.45rem auto 0; overflow:hidden; border:1px solid rgba(200,255,0,.12); border-radius:.5rem; background:radial-gradient(circle at 72% 24%, rgba(43,89,186,.14), transparent 35%), linear-gradient(145deg, rgba(13,16,37,.98), rgba(5,8,17,.98)); box-shadow:0 0 2rem rgba(0,0,0,.45), inset 0 0 1.5rem rgba(200,255,0,.04); }
+.zendo-home-reference-panel::before { position:absolute; z-index:0; inset:0; border:0; border-radius:inherit; content:""; pointer-events:none; }
+.zendo-home-reference-panel > * { position:relative; z-index:1; }
+.zendo-home-reference-panel > .zendo-home-hero,
+.zendo-home-reference-panel > .zendo-home-stats-wrap,
+.zendo-home-reference-panel > section.zendo-max-w-6xl { width:100%; max-width:none; }
+.zendo-homepage-shell .zendo-home-hero { position:relative; display:block; min-height:32rem; }
+.zendo-homepage-shell .zendo-home-hero-copy { position:relative; z-index:2; width:58%; max-width:none; padding-top:1.25rem; }
+.zendo-homepage-shell .zendo-home-market-visual { position:absolute; z-index:1; inset:0; width:100%; display:block; }
+.zendo-homepage-shell .zendo-home-hero-art { position:absolute; inset:0; width:100%; height:100%; min-height:0; margin-right:0; -webkit-mask-image:none; mask-image:none; }
+.zendo-homepage-shell .zendo-home-hero-art img { position:absolute !important; inset:0 !important; width:100% !important; height:100% !important; min-height:0 !important; }
+.zendo-homepage-shell .zendo-home-hero-art::after { background: linear-gradient(90deg, rgba(3,5,12,.90) 0%, rgba(3,5,12,.78) 20%, rgba(3,5,12,.42) 42%, rgba(3,5,12,.08) 62%, transparent 75%), linear-gradient(180deg, transparent 0%, transparent 80%, rgba(5,7,14,.60) 100%); }
+.zendo-homepage-shell .zendo-home-heading { max-width:none; font-size:clamp(3rem, 4vw, 4.2rem); line-height:1.02; white-space:nowrap; }
+.zendo-homepage-shell .zendo-home-stats { display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:.55rem; padding:.65rem; border:1px solid rgba(59,88,126,.36); border-radius:1rem; background:linear-gradient(145deg, rgba(9,18,31,.48), rgba(11,15,24,.34)); backdrop-filter:blur(5px); }
+.zendo-homepage-shell .zendo-home-stat { display:flex; min-width:0; align-items:center; gap:.65rem; padding:.55rem .7rem; border-right:1px solid rgba(72,92,118,.28); background:rgba(9,17,29,.24); }
+.zendo-homepage-shell .zendo-home-stat:last-child { border-right:0; }
+.zendo-home-stat-icon { display:grid; width:1.8rem; height:1.8rem; flex:0 0 auto; place-items:center; border-radius:999px; background:rgba(43,83,119,.3); color:#71dfff; box-shadow:0 0 .9rem currentColor; }
+.zendo-home-stat-icon svg { width:1.05rem; height:1.05rem; }
+.zendo-home-stat-blue .zendo-home-stat-icon { color:#6b9dff; background:rgba(35,75,150,.32); }
+.zendo-home-stat-lime .zendo-home-stat-icon { color:#c8ff00; background:rgba(120,150,0,.25); }
+.zendo-home-stat-purple .zendo-home-stat-icon { color:#c26bff; background:rgba(103,43,141,.28); }
+.zendo-home-stat-orange .zendo-home-stat-icon { color:#ff982f; background:rgba(137,70,21,.28); }
+.zendo-home-stat dt { color:#c3ccdc; font-size:.58rem; line-height:1.15; }
+.zendo-home-stat dd { margin-top:.18rem; color:#f4f4ef; font-size:.9rem; font-weight:700; line-height:1.05; }
+.zendo-homepage-shell .zendo-ecosystem-card { min-height:8rem; padding:1rem; border-color:rgba(63,119,226,.3); text-align:center; background:linear-gradient(150deg, rgba(12,25,53,.5), rgba(8,13,25,.38)); backdrop-filter:blur(4px); box-shadow:inset 0 1px rgba(92,139,226,.08), 0 10px 28px rgba(0,0,0,.18); }
+.zendo-homepage-shell .zendo-ecosystem-icon { display:flex; align-items:center; justify-content:center; width:100%; height:5.5rem; margin:0 auto .75rem; border:0; background:none; box-shadow:none; }
+.zendo-homepage-shell .zendo-ecosystem-icon .zendo-reference-art { width:5.5rem; height:5.5rem; margin-inline:auto; filter:drop-shadow(0 0 12px currentColor); }
+.zendo-homepage-shell .zendo-ecosystem-card h2 { font-size:1.25rem; line-height:1.15; }
+.zendo-homepage-shell .zendo-ecosystem-card p { max-width:15rem; margin-inline:auto; font-size:.75rem; line-height:1.4; }
+.zendo-homepage-account-control { display:grid; width:2rem; height:2rem; place-items:center; border:1px solid rgba(200,255,0,.46); border-radius:999px; color:#c8ff00; background:rgba(200,255,0,.08); font-weight:800; text-decoration:none; }
+.zendo-homepage-connect { min-width:8.5rem; box-shadow:0 0 .85rem rgba(200,255,0,.25); }
 
 .zendo-home-heading {
   max-width: 12ch;
@@ -122,6 +185,175 @@ html {
   line-height: 1;
 }
 
+.zendo-approved-hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.zendo-reference-art { display:block; width:100%; height:auto; }
+.zendo-chain-visual { min-height: 27rem; overflow:hidden; border:1px solid rgba(83,145,255,.38); border-radius:1.75rem; background: radial-gradient(circle at 50% 45%, rgba(40,73,161,.32), rgba(4,8,18,.96) 70%); box-shadow: inset 0 0 2.5rem rgba(74,94,255,.14), 0 1.5rem 4rem rgba(0,0,0,.35); }
+.zendo-chain-visual > .zendo-reference-art { min-height:27rem; }
+.zendo-chain-legacy { display:none; }
+.zendo-ecosystem-icon { display:block; height:6rem; margin:-.7rem auto .5rem; }
+.zendo-ecosystem-icon .zendo-reference-art { height:100%; }
+.zendo-explorer-hero-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(15rem,24rem); align-items:center; gap:1rem; margin-bottom:1rem; }
+.zendo-explorer-hero-row > .zendo-reference-art { max-height:12rem; }
+.zendo-zcoin-intro { display:grid; grid-template-columns:12rem minmax(0,1fr); gap:1.5rem; align-items:center; margin-bottom:1.25rem; }
+.zendo-zcoin-intro > .zendo-reference-art { max-height:12rem; }
+.zendo-reference-panel { margin:1.25rem 0 1.75rem; border:1px solid rgba(83,145,255,.34); border-radius:1.5rem; background:linear-gradient(145deg, rgba(12,22,42,.92), rgba(16,12,31,.88)); padding:1rem 1.5rem; }
+.zendo-reference-panel > .zendo-reference-art { max-height:13rem; }
+.zendo-feature-grid { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:1.25rem; align-items:center; }
+.zendo-feature-grid .zendo-reference-panel { min-height:17rem; display:grid; place-items:center; }
+.zendo-feature-grid .zendo-reference-panel > .zendo-reference-art { width:min(100%, 30rem); max-height:16rem; }
+.zendo-company-hero { margin-bottom:1.25rem; }
+.zendo-legal-hero { display:grid; grid-template-columns:minmax(0,1fr) minmax(16rem,.8fr); gap:1.25rem; align-items:center; }
+.zendo-legal-hero .zendo-reference-panel { min-height:15rem; display:grid; place-items:center; }
+.zendo-legal-hero .zendo-reference-panel > .zendo-reference-art { width:min(100%, 22rem); max-height:14rem; }
+.zendo-launchpad-empty { min-height:24rem; display:grid; grid-template-columns:13rem minmax(0,1fr); align-items:center; gap:2rem; background:radial-gradient(circle at 20% 50%, rgba(87,103,255,.16), transparent 42%), linear-gradient(145deg, rgba(14,24,45,.95), rgba(11,14,23,.98)); border-color:rgba(77,135,255,.42); }
+.zendo-launchpad-empty > .zendo-reference-art { width:100%; max-height:13rem; }
+@media (min-width: 48rem) { .zendo-md\:zendo-grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.zendo-launchpad-art { max-height:8rem; margin:-.4rem auto .35rem; }
+.zendo-studio-art { width:10rem; max-width:32vw; }
+.zendo-studio-workspace { grid-template-columns:minmax(12rem, .72fr) minmax(26rem, 1.8fr) minmax(15rem, .9fr); align-items:start; }
+.zendo-studio-shell .zendo-studio-code { min-height:24rem; border-color:rgba(77,135,255,.45); background:linear-gradient(145deg,#07101e,#0d1122); box-shadow:inset 0 0 2rem rgba(47,105,255,.11); }
+.zendo-studio-console { background:linear-gradient(145deg,#050b14,#10152a); border-color:rgba(77,135,255,.35); }
+@media (max-width: 64rem) { .zendo-studio-workspace { grid-template-columns:1fr 1.7fr; } .zendo-studio-controls { grid-column:1/-1; } }
+@media (max-width: 48rem) { .zendo-explorer-hero-row, .zendo-zcoin-intro, .zendo-feature-grid, .zendo-legal-hero, .zendo-launchpad-empty { grid-template-columns:1fr; } .zendo-explorer-hero-row > .zendo-reference-art { max-width:16rem; margin-inline:auto; } .zendo-zcoin-intro > .zendo-reference-art { max-width:11rem; margin-inline:auto; } .zendo-studio-workspace { grid-template-columns:1fr; } .zendo-studio-art { width:7rem; } .zendo-chain-visual, .zendo-chain-visual > .zendo-reference-art { min-height:18rem; } .zendo-reference-panel { padding:.75rem; } .zendo-launchpad-empty { min-height:18rem; gap:1rem; } }
+
+.zendo-approved-hero::before {
+  position: absolute;
+  z-index: -1;
+  inset: 8% 0 auto 35%;
+  height: 24rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(35, 94, 255, .2), transparent 68%);
+  content: "";
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+.zendo-glow-card,
+.zendo-ecosystem-card {
+  background: linear-gradient(145deg, rgba(18, 24, 40, .94), rgba(17, 17, 17, .94));
+  box-shadow: inset 0 1px rgba(255, 255, 255, .04), 0 1.25rem 3rem rgba(0, 0, 0, .18);
+}
+
+.zendo-ecosystem-card {
+  min-height: 9.5rem;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.zendo-ecosystem-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, .3), 0 0 2rem rgba(86, 103, 255, .12);
+}
+
+.zendo-dashboard-page > section,
+.zendo-dashboard-page > article {
+  box-shadow: 0 .75rem 2.5rem rgba(0, 0, 0, .12);
+}
+
+.zendo-dashboard-callout {
+  border: 1px solid #31382a;
+  border-radius: 1.5rem;
+  background: linear-gradient(145deg, rgba(27, 32, 22, .88), rgba(17, 17, 17, .92));
+  padding: 1.25rem;
+}
+
+.zendo-studio-shell {
+  color: #f4f1e6;
+}
+
+.zendo-studio-hero {
+  background: linear-gradient(120deg, rgba(16, 27, 47, .96), rgba(17, 17, 17, .96));
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, .25);
+}
+
+.zendo-studio-steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: .5rem;
+  overflow-x: auto;
+}
+
+.zendo-studio-step {
+  display: flex;
+  min-width: 7rem;
+  align-items: center;
+  gap: .5rem;
+  border: 1px solid #31382a;
+  border-radius: .75rem;
+  padding: .65rem .75rem;
+  color: #c5ccb6;
+  font-size: .75rem;
+  white-space: nowrap;
+}
+
+.zendo-studio-step span {
+  display: grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 999px;
+  background: #1b2016;
+  color: #c5ccb6;
+}
+
+.zendo-studio-step-active {
+  border-color: rgba(200, 255, 0, .55);
+  background: rgba(200, 255, 0, .1);
+  color: #c8ff00;
+}
+
+.zendo-studio-step-active span {
+  background: #c8ff00;
+  color: #0a0a0a;
+}
+
+.zendo-studio-template {
+  width: 100%;
+  border: 1px solid #31382a;
+  border-radius: .75rem;
+  padding: .7rem .8rem;
+  text-align: left;
+  color: #c5ccb6;
+  font-size: .8rem;
+}
+
+.zendo-studio-template-active {
+  border-color: rgba(200, 255, 0, .55);
+  background: #c8ff00;
+  color: #0a0a0a;
+}
+
+.zendo-studio-code,
+.zendo-studio-console {
+  min-height: 16rem;
+  overflow: auto;
+  border: 1px solid #202a3c;
+  border-radius: 1rem;
+  background: #070b13;
+  padding: 1rem;
+  color: #c5ccb6;
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.zendo-studio-console {
+  min-height: 11rem;
+  color: #8994ab;
+}
+
+@media (max-width: 47.99rem) {
+  .zendo-studio-steps {
+    display: flex;
+    padding-bottom: .2rem;
+  }
+}
+
 @media (min-width: 75rem) {
   .zendo-desktop-nav {
     display: flex;
@@ -137,6 +369,7 @@ html {
 
   .zendo-desktop-nav > a {
     padding-inline: .5rem;
+    font-size: .78rem;
   }
 
   .zendo-desktop-nav button {
@@ -176,6 +409,8 @@ html {
     display: block;
   }
 }
+.zendo-homepage-header .zendo-desktop-nav > button:last-child { display:none; }
+.zendo-site-header.zendo-homepage-header { width:min(100% - 1.5rem, 90rem); margin-inline:auto; border:1px solid rgba(73,76,190,.8); border-bottom-color:rgba(73,76,190,.45); border-radius:.5rem .5rem 0 0; background:rgba(7,10,22,.92); box-shadow:0 0 2.5rem rgba(66,55,184,.22); }
 
 @media (max-width: 47.99rem) {
   .zendo-site-container {
@@ -220,7 +455,7 @@ body {
     radial-gradient(720px 420px at -15% 8%, rgba(255, 215, 0, 0.08), transparent 48%),
     #0A0A0A;
   color: #f4f1e6;
-  font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans);
   line-height: 1.5;
 }
 
@@ -265,6 +500,14 @@ body {
 
 .zendo-site-footer a:hover {
   text-decoration-color: currentColor;
+}
+
+@media (min-width: 48rem) and (max-width: 63.99rem) {
+  .zendo-site-footer > div { grid-template-columns: minmax(13rem, 1.35fr) minmax(10rem, 1fr) minmax(8rem, .85fr) minmax(7rem, .7fr); gap:1.4rem; padding-block:2.25rem; }
+  .zendo-site-footer > div > div { min-width:0; }
+  .zendo-site-footer > div a,
+  .zendo-site-footer > div p { font-size:.72rem; line-height:1.35; }
+  .zendo-site-footer > p { padding-bottom:1.75rem; font-size:.68rem; line-height:1.45; }
 }
 
 .zendo-auth-card {
@@ -517,7 +760,7 @@ button {
 }
 
 .whitepaper h1 {
-  font-family: Syne, sans-serif;
+  font-family: var(--font-display);
   font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -525,7 +768,7 @@ button {
 
 .whitepaper h2 {
   margin-top: 1.5rem;
-  font-family: Syne, sans-serif;
+  font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 700;
 }
@@ -770,4 +1013,203 @@ html[data-zendo-app="android"] .zendo-paper-mobile-card a + a { border-color: #3
   html[data-zendo-app="android"] select { font-size: 16px; }
   html[data-zendo-app="android"] .zendo-bg-dark.zendo-max-w-lg { padding: 1.5rem 1rem 2rem; }
   html[data-zendo-app="android"] .zendo-font-display.zendo-text-4xl { font-size: 2.15rem; line-height: 1.05; }
+}
+/* Narrow viewport safeguards for the approved website visual system. */
+@media (max-width: 47.99rem) {
+  .zendo-dashboard-page,
+  .zendo-approved-hero,
+  .zendo-studio-shell,
+  .zendo-home-hero,
+  .zendo-home-market-visual { width: 100%; max-width: 100%; min-width: 0; overflow-x: hidden; }
+  .zendo-dashboard-page h1,
+  .zendo-dashboard-page h2,
+  .zendo-dashboard-page h3,
+  .zendo-approved-hero h1,
+  .zendo-studio-hero h1,
+  .zendo-home-hero h1,
+  .zendo-home-hero p,
+  .zendo-studio-hero p { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
+  .zendo-home-actions,
+  .zendo-home-actions > div,
+  .zendo-studio-steps { min-width: 0; max-width: 100%; flex-wrap: wrap; }
+  .zendo-home-actions a,
+  .zendo-home-actions button,
+  .zendo-home-utility-links { max-width: 100%; overflow-wrap: anywhere; }
+  .zendo-studio-code,
+  .zendo-studio-console,
+  .zendo-studio-template,
+  .zendo-glow-card,
+  .zendo-ecosystem-card { min-width: 0; max-width: 100%; overflow-x: auto; }
+}
+/* Second visual polish pass: denser, premium dashboard surfaces. */
+.zendo-chain-visual {
+  position: relative;
+  min-height: 17rem;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(104, 139, 255, .26);
+  border-radius: 1.6rem;
+  background: radial-gradient(circle at 50% 44%, rgba(200,255,0,.14), transparent 18%), radial-gradient(circle at 80% 20%, rgba(69,91,255,.25), transparent 42%), linear-gradient(145deg, #111a2e, #070b13 72%);
+  box-shadow: 0 24px 60px rgba(22, 43, 105, .22), inset 0 0 70px rgba(50, 82, 178, .12);
+}
+.zendo-chain-core { z-index: 2; display: grid; place-items: center; width: 5.5rem; height: 5.5rem; border: 2px solid #c8ff00; border-radius: 1.4rem; color: #c8ff00; font-family: var(--font-display); font-size: 3rem; font-weight: 800; box-shadow: 0 0 36px rgba(200,255,0,.35), inset 0 0 25px rgba(200,255,0,.12); transform: rotate(12deg); }
+.zendo-chain-orbit { position: absolute; width: 12rem; height: 7rem; border: 1px solid rgba(120,154,255,.56); border-radius: 50%; transform: rotate(-26deg); }
+.zendo-chain-orbit-two { width: 16rem; height: 9rem; border-color: rgba(200,255,0,.24); transform: rotate(42deg); }
+.zendo-chain-node { position: absolute; width: .8rem; height: .8rem; border-radius: 999px; background: #c8ff00; box-shadow: 0 0 18px #c8ff00; }
+.zendo-chain-node-one { top: 22%; left: 24%; }.zendo-chain-node-two { top: 26%; right: 21%; background: #75a6ff; box-shadow: 0 0 18px #75a6ff; }.zendo-chain-node-three { bottom: 20%; left: 29%; background: #a86dff; box-shadow: 0 0 18px #a86dff; }.zendo-chain-node-four { right: 28%; bottom: 18%; }
+.zendo-chain-caption { position: absolute; right: 1.1rem; bottom: 1rem; margin: 0; color: #9da8c5; font-size: .64rem; letter-spacing: .14em; }
+.zendo-ecosystem-card { min-height: 10rem; background: linear-gradient(150deg, rgba(17,26,46,.92), rgba(12,15,20,.98)); box-shadow: 0 16px 40px rgba(0,0,0,.18); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.zendo-ecosystem-card:hover { transform: translateY(-3px); box-shadow: 0 20px 46px rgba(48,78,155,.22); }
+.zendo-ecosystem-icon { display: grid; place-items: center; width: 2.8rem; height: 2.8rem; margin-bottom: 1.25rem; border: 1px solid rgba(200,255,0,.38); border-radius: .9rem; color: #c8ff00; background: linear-gradient(145deg, rgba(200,255,0,.18), rgba(69,91,255,.18)); font-size: 1.35rem; font-weight: 800; }
+.zendo-launchpad-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem); gap: 1.25rem; align-items: start; }
+.zendo-launchpad-discovery { min-width: 0; }
+.zendo-launchpad-create-panel { position: sticky; top: 1rem; }
+.zendo-launchpad-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) minmax(9rem, 11rem) auto; align-items: center; gap: .75rem; }
+.zendo-launchpad-toolbar > button { white-space: nowrap; }
+.zendo-launchpad-sort { min-height: 2.75rem; width: 100%; padding: 0 .9rem; border: 1px solid #31382a; border-radius: .8rem; color: #e3e7dc; background: #10140f; font: inherit; }
+.zendo-launchpad-sort:focus-visible { outline: 2px solid #b8ff00; outline-offset: 2px; }
+.zendo-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.zendo-launchpad-panel { background: linear-gradient(160deg, rgba(23,29,18,.98), rgba(14,17,13,.98)); box-shadow: 0 18px 46px rgba(0,0,0,.2); }
+.zendo-launchpad-field-preview { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 2.8rem; padding: 0 .75rem; border: 1px solid #31382a; border-radius: .7rem; color: #e3e7dc; font-size: .82rem; }
+.zendo-launchpad-field-preview span { color: #8d967f; font-size: .75rem; }
+.zendo-launchpad-field-tall { min-height: 4.5rem; align-items: flex-start; padding-top: .7rem; }
+.zendo-launchpad-skeleton-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; }
+.zendo-launchpad-skeleton { min-height: 12rem; padding: 1rem; border: 1px solid #273044; border-radius: 1.2rem; background: linear-gradient(110deg, #111827 8%, #1b263c 18%, #111827 33%); background-size: 200% 100%; animation: zendo-skeleton 1.6s linear infinite; }
+.zendo-launchpad-skeleton span { display: block; height: .75rem; margin-bottom: .8rem; border-radius: 999px; background: rgba(176,194,233,.15); }.zendo-launchpad-skeleton span:first-child { width: 42%; height: 3rem; border-radius: .8rem; }.zendo-launchpad-skeleton span:last-child { width: 68%; }
+@keyframes zendo-skeleton { to { background-position: -200% 0; } }
+.zendo-explorer-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(16rem, 20rem); gap: 1.25rem; align-items: start; }
+.zendo-explorer-status { position: sticky; top: 1rem; }.zendo-status-dot { width: .65rem; height: .65rem; border-radius: 999px; background: #c8ff00; box-shadow: 0 0 14px rgba(200,255,0,.8); }
+.zendo-studio-shell .zendo-studio-hero, .zendo-studio-shell > .zendo-panel { background: linear-gradient(145deg, rgba(18,27,48,.98), rgba(12,15,22,.98)); }
+@media (max-width: 63.99rem) { .zendo-launchpad-layout, .zendo-explorer-layout { grid-template-columns: 1fr; } .zendo-launchpad-create-panel, .zendo-explorer-status { position: static; } }
+@media (max-width: 47.99rem) { .zendo-launchpad-toolbar { grid-template-columns: minmax(0, 1fr) auto; } .zendo-launchpad-toolbar > input { grid-column: 1 / -1; } .zendo-launchpad-toolbar > button { width: 100%; } }
+@media (max-width: 47.99rem) { .zendo-launchpad-skeleton-grid { grid-template-columns: 1fr 1fr; } .zendo-chain-visual { min-height: 13rem; } }
+@media (max-width: 47.99rem) {
+  html, body { max-width: 100%; overflow-x: hidden; }
+  .zendo-site-container,
+  .zendo-dashboard-page,
+  .zendo-home-hero,
+  .zendo-home-hero-copy,
+  .zendo-launchpad-layout,
+  .zendo-launchpad-discovery,
+  .zendo-studio-shell,
+  .zendo-explorer-layout { box-sizing: border-box; width: 100%; max-width: 100vw; min-width: 0; }
+  .zendo-dashboard-page > *,
+  .zendo-home-hero > *,
+  .zendo-launchpad-layout > *,
+  .zendo-studio-shell > *,
+  .zendo-explorer-layout > * { min-width: 0; max-width: 100%; }
+  .zendo-home-heading { max-width: 100%; font-size: 1.85rem !important; line-height: 1.12; }
+  .zendo-home-hero-copy { max-width: 100%; }
+  .zendo-home-actions > div:first-child { flex-direction: column; align-items: flex-start; }
+  .zendo-home-actions > div:first-child > * { max-width: 100%; }
+  .zendo-home-hero-copy > p { max-width: 100%; }
+  .zendo-home-utility-links { max-width: 100%; flex-wrap: wrap; }
+  .zendo-launchpad-skeleton-grid { grid-template-columns: 1fr; }
+  .zendo-launchpad-panel { max-width: 100%; }
+  .zendo-dashboard-page h1,
+  .zendo-dashboard-page h2,
+  .zendo-dashboard-page h3,
+  .zendo-studio-hero h1,
+  .zendo-home-hero h1 { width: 100%; max-width: 100% !important; font-size: 2.1rem; line-height: 1.08; white-space: normal !important; text-wrap: wrap !important; overflow-wrap: anywhere; word-break: break-word; }
+  .zendo-home-hero-copy > p,
+  .zendo-dashboard-page .zendo-mb-8 > p,
+  .zendo-studio-hero p { white-space: normal !important; text-wrap: wrap !important; overflow-wrap: anywhere; word-break: break-word; }
+  .zendo-studio-step { min-width: 0; white-space: normal; }
+  .zendo-dashboard-page > .zendo-mb-8 h1 { font-size: 2.1rem; line-height: 1.08; }
+}
+@media (max-width: 47.99rem) {
+  .zendo-home-hero-copy { width: calc(100vw - 2rem); max-width: calc(100vw - 2rem); }
+  .zendo-home-hero { grid-template-columns: minmax(0, 1fr) !important; }
+  .zendo-home-hero * { min-width: 0; max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
+  .zendo-home-hero-copy > p { width: min(20rem, calc(100vw - 2rem)) !important; max-width: min(20rem, calc(100vw - 2rem)) !important; font-size: .95rem; }
+  .zendo-home-utility-links { width: min(20rem, calc(100vw - 2rem)); max-width: min(20rem, calc(100vw - 2rem)); }
+  .zendo-home-utility-links a { min-width: 0; overflow-wrap: anywhere; }
+  .zendo-studio-hero h1 { max-width: 15ch !important; }
+  .zendo-dashboard-page > .zendo-mb-8 { width: 100%; max-width: 100%; }
+  .zendo-dashboard-page > .zendo-mb-8 p { width: min(20rem, calc(100vw - 2rem)); max-width: min(20rem, calc(100vw - 2rem)); overflow-wrap: anywhere; word-break: break-word; text-wrap: wrap !important; }
+}
+/* Final client-facing composition pass. */
+.zendo-home-hero { min-height: 30rem; padding-block: 2.5rem 2rem; }
+@media (min-width: 64rem) { .zendo-home-hero { grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr); } }
+@media (min-width: 64rem) {
+  .zendo-homepage-shell .zendo-home-hero { min-height:18rem; padding-block:.7rem; }
+  .zendo-homepage-shell .zendo-home-hero-copy { padding-top:.35rem; }
+  .zendo-homepage-shell .zendo-home-heading { font-size:clamp(2.7rem, 3.55vw, 3.8rem); }
+  .zendo-homepage-shell .zendo-home-hero-copy > p { margin-top:.75rem; font-size:.92rem; line-height:1.45; }
+  .zendo-homepage-shell .zendo-home-actions { margin-top:1.15rem; }
+  .zendo-homepage-shell .zendo-home-actions > div { gap:.7rem; }
+  .zendo-homepage-shell .zendo-home-actions a { min-height:2.35rem; padding-inline:1rem; border-radius:.65rem; font-size:.75rem; }
+  .zendo-homepage-shell .zendo-home-hero-art { height:18rem; min-height:18rem; }
+  .zendo-homepage-shell .zendo-home-hero-art { background-image:none; background-size:cover; background-position:center bottom; background-repeat:no-repeat; }
+  .zendo-homepage-shell .zendo-home-hero-art img { min-height:0; object-fit:cover; object-position:center bottom; }
+  .zendo-homepage-shell .zendo-home-hero-art::after { background:linear-gradient(90deg, #070807 0%, rgba(7,8,7,.58) 14%, transparent 48%), linear-gradient(180deg, rgba(7,8,7,.45) 0%, transparent 34%, transparent 100%); }
+  .zendo-homepage-shell .zendo-home-stat { padding:.2rem .35rem; }
+  .zendo-homepage-shell .zendo-home-stat { min-height:3.6rem; flex-direction:row; justify-content:flex-start; }
+  .zendo-homepage-shell .zendo-home-stat-icon { width:1.3rem; height:1.3rem; }
+  .zendo-homepage-shell .zendo-home-stat-icon svg { width:.72rem; height:.72rem; }
+  .zendo-homepage-shell .zendo-home-stat dd { margin-top:.1rem; font-size:.75rem; }
+  .zendo-homepage-shell .zendo-home-stat dt { font-size:.52rem; }
+  .zendo-homepage-shell .zendo-ecosystem-card { min-height:5.7rem; padding:.5rem; }
+  .zendo-homepage-shell .zendo-ecosystem-icon { height:3.5rem; margin:0 auto .5rem; }
+  .zendo-homepage-shell .zendo-ecosystem-icon .zendo-reference-art { width:3.5rem; height:3.5rem; }
+  .zendo-homepage-shell .zendo-ecosystem-card h2 { font-size:.9rem; }
+  .zendo-homepage-shell .zendo-ecosystem-card p { margin-top:.18rem; font-size:.58rem; line-height:1.2; }
+}
+/* Keep the investor composition compact in tablet-sized previews too. */
+@media (min-width: 48rem) and (max-width: 63.99rem) {
+  .zendo-homepage-header .zendo-desktop-nav { display:flex; min-width:0; align-items:center; gap:0; }
+  .zendo-homepage-header .zendo-desktop-nav > a,
+  .zendo-homepage-header .zendo-desktop-nav button { padding-inline:.28rem; font-size:.62rem; white-space:nowrap; }
+  .zendo-homepage-header .zendo-header-actions { display:flex; min-width:0; margin-left:auto; align-items:center; gap:.25rem; }
+  .zendo-homepage-header .zendo-header-menu,
+  .zendo-homepage-header .zendo-mobile-drawer { display:none; }
+  .zendo-homepage-header .zendo-header-logo { flex:0 0 auto; }
+  .zendo-homepage-header .zendo-site-header-inner { max-width:100%; overflow:hidden; }
+  .zendo-homepage-header .zendo-desktop-nav { flex:1 1 auto; overflow:hidden; }
+  .zendo-homepage-header .zendo-desktop-nav > a,
+  .zendo-homepage-header .zendo-desktop-nav button { font-size:.66rem; padding-inline:.34rem; }
+  .zendo-homepage-shell .zendo-home-hero { min-height:15rem; padding-block:.55rem; }
+  .zendo-homepage-shell .zendo-home-hero-copy { position:relative; z-index:2; width:62%; padding-top:.35rem; }
+  .zendo-homepage-shell .zendo-home-heading { font-size:clamp(2.1rem, 4.2vw, 2.9rem); line-height:1.02; }
+  .zendo-homepage-shell .zendo-home-hero-copy > p { margin-top:.65rem; font-size:.82rem; line-height:1.4; }
+  .zendo-homepage-shell .zendo-home-actions { margin-top:.9rem; }
+  .zendo-homepage-shell .zendo-home-actions > div { gap:.5rem; }
+  .zendo-homepage-shell .zendo-home-actions a { min-height:2.2rem; padding-inline:.8rem; border-radius:.6rem; font-size:.66rem; }
+  .zendo-homepage-shell .zendo-home-market-visual { right:-.5rem; width:64%; }
+  .zendo-homepage-shell .zendo-home-market-visual > .zendo-glow-card { display:none; }
+  .zendo-homepage-shell .zendo-home-hero-art { width:100%; height:17rem; min-height:17rem; margin-right:0; background-size:cover; background-position:center bottom; background-repeat:no-repeat; }
+  .zendo-homepage-shell .zendo-home-hero-art::after { background:linear-gradient(90deg, rgba(7,8,7,.96) 0%, rgba(7,8,7,.64) 22%, transparent 58%), linear-gradient(180deg, rgba(7,8,7,.45) 0%, transparent 35%, transparent 100%); }
+  .zendo-homepage-shell .zendo-home-hero-art { background-image:none; }
+  .zendo-homepage-shell .zendo-home-hero-art img { min-height:0; object-fit:cover; object-position:center bottom; }
+  .zendo-homepage-shell .zendo-home-stat { padding:.2rem .3rem; }
+  .zendo-homepage-shell .zendo-home-stat { min-height:3.3rem; flex-direction:row; justify-content:flex-start; }
+  .zendo-homepage-shell .zendo-home-stat-icon { width:1.25rem; height:1.25rem; }
+  .zendo-homepage-shell .zendo-home-stat-icon svg { width:.7rem; height:.7rem; }
+  .zendo-homepage-shell .zendo-home-stat dd { margin-top:.1rem; font-size:.7rem; }
+  .zendo-homepage-shell .zendo-home-stat dt { font-size:.5rem; }
+  .zendo-homepage-shell .zendo-ecosystem-card { min-height:5rem; padding:.4rem; }
+  .zendo-homepage-shell .zendo-ecosystem-icon { height:2.45rem; margin:-.1rem auto .1rem; }
+  .zendo-homepage-shell .zendo-ecosystem-icon .zendo-reference-art { width:3rem; }
+  .zendo-homepage-shell .zendo-ecosystem-card h2 { font-size:.85rem; }
+  .zendo-homepage-shell .zendo-ecosystem-card p { margin-top:.15rem; font-size:.55rem; line-height:1.2; }
+}
+.zendo-home-resources { margin-top:2.5rem; border-top: 1px solid rgba(49,56,42,.7); padding-top: 1.5rem; }
+.zendo-resource-link { display: flex; min-height: 3.2rem; align-items: center; justify-content: space-between; border: 1px solid #31382a; border-radius: .9rem; padding: 0 1rem; color: #dfe5d2; background: linear-gradient(145deg, rgba(18,24,40,.8), rgba(17,17,17,.8)); font-size: .85rem; text-decoration: none; }
+.zendo-resource-link:hover { border-color: rgba(200,255,0,.55); color: #c8ff00; }
+.zendo-studio-workspace { grid-template-columns: 15rem minmax(0, 1fr) 20rem; align-items: stretch; }
+.zendo-studio-workspace > .zendo-studio-template-panel { grid-column: 1; }
+.zendo-studio-workspace > .zendo-studio-editor-panel { grid-column: 2; min-width: 0; }
+.zendo-studio-workspace > .zendo-studio-controls { grid-column: 3; }
+@media (max-width: 63.99rem) { .zendo-studio-workspace { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); } .zendo-studio-workspace > .zendo-studio-controls { grid-column: 1 / -1; } }
+@media (max-width: 47.99rem) { .zendo-home-hero { min-height: auto; padding-block: 3rem 4rem; } .zendo-homepage-shell .zendo-home-hero { display:grid; min-height:auto; } .zendo-homepage-shell .zendo-home-hero-copy { width:100%; padding-top:0; } .zendo-homepage-shell .zendo-home-market-visual { position:relative; top:auto; right:auto; width:100%; } .zendo-homepage-shell .zendo-home-heading { white-space:normal; font-size:2rem; } .zendo-home-hero-art { height:18rem; min-height: 18rem; margin-right: 0; background-size:cover; background-position:62% center; -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 100%); mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 100%); } .zendo-home-hero-art img { min-height: 18rem; object-fit:cover; object-position:62% center; } .zendo-studio-workspace { grid-template-columns: 1fr; } .zendo-studio-workspace > * { grid-column: 1 !important; } }
+@media (max-width: 47.99rem) { .zendo-home-reference-panel { width:calc(100% - 1rem); } .zendo-homepage-shell > .zendo-home-hero, .zendo-homepage-shell > .zendo-home-stats-wrap, .zendo-homepage-shell > section.zendo-max-w-6xl { width:calc(100% - 1rem); } .zendo-homepage-shell .zendo-home-stats { grid-template-columns:1fr 1fr; } .zendo-homepage-shell .zendo-home-stat { border-right:0; border-bottom:1px solid rgba(72,92,118,.3); } .zendo-homepage-shell .zendo-home-stat:last-child { grid-column:1 / -1; border-bottom:0; } }
+@media (max-width: 47.99rem) {
+  .zendo-launchpad-discovery,
+  .zendo-launchpad-create-panel { width: calc(100vw - 2rem); max-width: calc(100vw - 2rem); }
+  .zendo-launchpad-create-panel h2 { max-width: 100%; font-size: 1.8rem; line-height: 1.1; overflow-wrap: anywhere; }
+  .zendo-launchpad-discovery .zendo-launchpad-skeleton-grid,
+  .zendo-launchpad-discovery > .zendo-grid,
+  .zendo-launchpad-discovery > .zendo-flex,
+  .zendo-launchpad-discovery > .zendo-launchpad-skeleton-grid { width: 100%; max-width: 100%; }
 }

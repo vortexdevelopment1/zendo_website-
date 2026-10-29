@@ -22,7 +22,7 @@ New accounts receive 0 ZCoin. The faucet is closed. Older accounts keep the bala
 
 ## Launchpad
 
-Creating a coin costs 0.2 ZCoin. The creator names it, picks a ticker, and writes a short description. Price follows a constant-product curve. Each trade pays 1 percent, split 0.30 percent to the creator and 0.70 percent to the protocol, plus a small gas charge. At 85 ZCoin of real reserves the coin graduates into a pool. People can reply, vote the coin up or down, report it, and promote it for 50 ZCoin for 24 hours.
+Creating a coin costs 0.2 ZCoin. The creator names it, picks a ticker, and writes a short description. Price follows a constant-product curve. Each trade pays 1 percent, split 0.30 percent to the creator and 0.70 percent to the protocol, plus a small gas charge. At 10,000 ZCoin of real reserves the coin graduates into a pool. People can reply, vote the coin up or down, report it, and promote it for 50 ZCoin for 24 hours.
 
 ## Stake, governance, grants, and the directory
 
@@ -50,7 +50,7 @@ Pointer styles are named `zendo-pointer`, `zendo-default`, `zendo-text`, `zendo-
 
 `docs/whitepaper-body.html` is the English source. Spanish, Chinese, Hindi, and Arabic sit beside it. The site and the PDFs are version 0.9.0. Each PDF title is stamped with that version and a hash of its source. The page is `/whitepaper`, with `?lang=es`, `zh`, `hi`, or `ar`. The explorer and the wallet embed the English HTML copy.
 
-The paper says balances live in this node's ledger, that new accounts receive 0 ZCoin, and that the operator seed starts at 100,000 ZCoin. Supply is 1,000,000,000 with 18 decimals. The ticker is $ZCoin. Founder locks are 300,000,000 and the public allocation is 700,000,000. Louis Conner is Co-founder and President. The vesting clock starts at public launch, then a 120-day cliff and 25 percent of each founder allocation each year. Nothing unlocks on the cliff day. Staking rewards are the only inflation. The launchpad section states the 0.2 ZCoin creation fee, the 1 percent trade fee, graduation at 85 ZCoin, and promotion at 50 ZCoin for 24 hours. Governance writes one allowed parameter when a vote passes. Grants pay from the treasury. Accounts use a hashed phrase and PIN. The Rust section describes gossip, fork choice, six programs, equivocation slashing, and unauthenticated localhost RPC. The closing section says there is no card processor and no fiat payout. The paper says it is not legal, financial, or investment advice.
+The paper says balances live in this node's ledger, that new accounts receive 0 ZCoin, and that the operator seed starts at 100,000 ZCoin. Supply is 1,000,000,000 with 18 decimals. The ticker is $ZCoin. Founder locks are 300,000,000 and the public allocation is 700,000,000. Louis Conner is Co-founder and President. The vesting clock starts at public launch, then a 120-day cliff and 25 percent of each founder allocation each year. Nothing unlocks on the cliff day. Staking rewards are the only inflation. The launchpad section states the 0.2 ZCoin creation fee, the 1 percent trade fee, graduation at 10,000 ZCoin, and promotion at 50 ZCoin for 24 hours. Governance writes one allowed parameter when a vote passes. Grants pay from the treasury. Accounts use a hashed phrase and PIN. The Rust section describes gossip, fork choice, six programs, equivocation slashing, and unauthenticated localhost RPC. The closing section says there is no card processor and no fiat payout. The paper says it is not legal, financial, or investment advice.
 
 ## How to run and host
 

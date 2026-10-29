@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import { PageIntro } from "@/components/chrome";
 import { CONTACT_EMAIL } from "@/lib/seed";
+import { LegalArt } from "@/components/reference-art";
 
 export const metadata: Metadata = { title: "Terms and conditions" };
 
 export default function Page() {
   return (
-    <article className="zendo-mx-auto zendo-max-w-3xl zendo-space-y-4 zendo-px-4 zendo-py-12 zendo-text-sm zendo-leading-7 zendo-text-muted">
-      <PageIntro kicker="Legal" title="Terms and conditions" body="These terms cover use of the Zendo software, including the site inside the Android and iOS wrappers." />
+    <article className="zendo-feature-page zendo-dashboard-page zendo-mx-auto zendo-max-w-6xl zendo-space-y-4 zendo-px-4 zendo-py-12 zendo-text-sm zendo-leading-7 zendo-text-muted">
+      <div className="zendo-legal-hero">
+        <PageIntro kicker="Legal" title="Terms and conditions" body="These terms cover use of the Zendo software, including the site inside the Android and iOS wrappers." />
+        <div className="zendo-reference-panel"><LegalArt /></div>
+      </div>
       <h2 className="zendo-font-display zendo-text-xl zendo-font-bold zendo-text-cream">1. Acceptance</h2>
       <p>Creating an account, or continuing to use a node after reading this page, means you accept these terms. If you do not accept them, do not create an account.</p>
       <h2 className="zendo-font-display zendo-text-xl zendo-font-bold zendo-text-cream">2. What the software is</h2>
